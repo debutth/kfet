@@ -17,6 +17,7 @@
             <ul class="nav-links">
                 <li><a href="#accueil">Accueil</a></li>
                 <li><a href="#suggestions">Suggestions</a></li>
+                <li id="auth-link"><a href="#" onclick="showAuthModal()">Se connecter</a></li>
             </ul>
             <div class="hamburger">
                 <span></span>
@@ -45,13 +46,7 @@
             
             <form class="suggestion-form">
                 <div class="form-group">
-                    <input type="text" id="suggestionAuthor" placeholder="Ton nom (optionnel)" maxlength="50">
-                </div>
-                <div class="form-group">
-                    <input type="text" id="suggestionTitle" placeholder="Titre de ta suggestion" required maxlength="100">
-                </div>
-                <div class="form-group">
-                    <textarea id="suggestionText" placeholder="Détaille ta suggestion..." rows="4" required maxlength="500"></textarea>
+                    <input type="text" id="suggestionceholder="Détaille ta suggestion..." rows="4" required maxlength="500"></textarea>
                 </div>
                 <button type="submit" class="submit-btn">Soumettre ma suggestion</button>
             </form>
@@ -72,9 +67,52 @@
         </div>
     </footer>
 
+    <!-- Auth Modal -->
+    <div id="auth-modal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeAuthModal()">&times;</span>
+            <div class="auth-tabs">
+                <button class="tab-btn active" onclick="showLoginTab()">Connexion</button>
+                <button class="tab-btn" onclick="showSignupTab()">Inscription</button>
+            </div>
+            
+            <!-- Login Form -->
+            <div id="login-form" class="auth-form">
+                <h3>Se connecter</h3>
+                <form id="loginForm">
+                    <div class="form-group">
+                        <input type="email" id="loginEmail" placeholder="Email" required>
+                    </div>
+                    <div class="form-group">
+                        <input type="password" id="loginPassword" placeholder="Mot de passe" required>
+                    </div>
+                    <button type="submit" class="auth-btn">Se connecter</button>
+                </form>
+            </div>
+            
+            <!-- Signup Form -->
+            <div id="signup-form" class="auth-form" style="display: none;">
+                <h3>S'inscrire</h3>
+                <form id="signupForm">
+                    <div class="form-group">
+                        <input type="text" id="signupName" placeholder="Nom d'utilisateur" required>
+                    </div>
+                    <div class="form-group">
+                        <input type="email" id="signupEmail" placeholder="Email" required>
+                    </div>
+                    <div class="form-group">
+                        <input type="password" id="signupPassword" placeholder="Mot de passe" required>
+                    </div>
+                    <button type="submit" class="auth-btn">S'inscrire</button>
+                </form>
+            </div>
+            
+            <div id="auth-message" class="auth-message"></div>
+        </div>
+    </div>
+
     <!-- Firebase -->
     <script type="module" src="firebase-config.js"></script>
-
     <script src="script.js"></script>
 </body>
 </html>

@@ -1,0 +1,566 @@
+/* Colors */
+:root {
+    --primary-blue: #003366;
+    --light-blue: #0055cc;
+    --lighter-blue: #e8f1ff;
+    --white: #ffffff;
+    --dark-gray: #333333;
+    --light-gray: #f5f5f5;
+    --accent-gold: #ffc107;
+}
+
+/* General Styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    color: var(--dark-gray);
+    line-height: 1.6;
+    background-color: var(--white);
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+/* Navigation */
+.navbar {
+    background: linear-gradient(135deg, var(--primary-blue) 0%, var(--light-blue) 100%);
+    padding: 1rem 0;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: 0 2px 10px rgba(0, 51, 102, 0.1);
+}
+
+.navbar .container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.logo {
+    color: var(--white);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.logo h1 {
+    font-size: 1.8rem;
+    font-weight: bold;
+}
+
+.logo p {
+    font-size: 0.8rem;
+    opacity: 0.9;
+}
+
+.nav-links {
+    display: flex;
+    list-style: none;
+    gap: 2rem;
+}
+
+.nav-links a {
+    color: var(--white);
+    text-decoration: none;
+    font-weight: 500;
+    transition: opacity 0.3s ease;
+}
+
+.nav-links a:hover {
+    opacity: 0.8;
+    text-decoration: underline;
+}
+
+.hamburger {
+    display: none;
+    flex-direction: column;
+    cursor: pointer;
+}
+
+.hamburger span {
+    width: 25px;
+    height: 3px;
+    background-color: var(--white);
+    margin: 5px 0;
+    transition: 0.3s;
+}
+
+/* Hero Section */
+.hero {
+    background: linear-gradient(135deg, var(--primary-blue) 0%, var(--light-blue) 100%);
+    color: var(--white);
+    padding: 120px 20px;
+    text-align: center;
+    min-height: 500px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.hero-content h2 {
+    font-size: 3.5rem;
+    margin-bottom: 1rem;
+    font-weight: bold;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.hero-content p {
+    font-size: 1.5rem;
+    margin-bottom: 0.5rem;
+    opacity: 0.95;
+}
+
+.hero-content .subtitle {
+    font-size: 1.2rem;
+    margin-bottom: 2rem;
+    font-style: italic;
+}
+
+.cta-btn {
+    background-color: var(--accent-gold);
+    color: var(--primary-blue);
+    padding: 15px 40px;
+    font-size: 1.1rem;
+    border: none;
+    border-radius: 50px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+.cta-btn:hover {
+    background-color: #ffb300;
+    transform: translateY(-3px);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+}
+
+/* Suggestions Section */
+.suggestions {
+    padding: 80px 20px;
+    background-color: var(--light-gray);
+}
+
+.suggestions h2 {
+    text-align: center;
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+    color: var(--primary-blue);
+    position: relative;
+    padding-bottom: 1rem;
+}
+
+.suggestions h2::after {
+    content: '';
+    display: block;
+    width: 100px;
+    height: 4px;
+    background: linear-gradient(90deg, var(--light-blue), var(--primary-blue));
+    margin: 1rem auto 0;
+}
+
+.suggestions-subtitle {
+    text-align: center;
+    font-size: 1.1rem;
+    color: var(--dark-gray);
+    margin-bottom: 3rem;
+}
+
+.suggestion-form {
+    background: var(--white);
+    padding: 2rem;
+    border-radius: 15px;
+    box-shadow: 0 4px 15px rgba(0, 51, 102, 0.1);
+    margin-bottom: 3rem;
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.form-group {
+    margin-bottom: 1rem;
+}
+
+.suggestion-form input,
+.suggestion-form textarea {
+    width: 100%;
+    padding: 12px;
+    border: 2px solid #e0e0e0;
+    border-radius: 8px;
+    font-family: inherit;
+    font-size: 1rem;
+    transition: border-color 0.3s ease;
+}
+
+.suggestion-form input:focus,
+.suggestion-form textarea:focus {
+    outline: none;
+    border-color: var(--light-blue);
+}
+
+.suggestion-form .submit-btn {
+    width: 100%;
+    padding: 12px;
+    background-color: var(--light-blue);
+    color: var(--white);
+    font-weight: bold;
+    margin-top: 1rem;
+}
+
+.suggestion-form .submit-btn:hover {
+    background-color: var(--primary-blue);
+}
+
+.suggestions-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+    gap: 2rem;
+}
+
+.suggestion-card {
+    background: var(--white);
+    padding: 2rem;
+    border-radius: 15px;
+    box-shadow: 0 4px 15px rgba(0, 51, 102, 0.1);
+    transition: all 0.3s ease;
+    animation: slideIn 0.5s ease;
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.suggestion-card:hover {
+    box-shadow: 0 6px 20px rgba(0, 51, 102, 0.15);
+    transform: translateY(-5px);
+}
+
+.suggestion-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: start;
+    margin-bottom: 1rem;
+    border-bottom: 2px solid var(--lighter-blue);
+    padding-bottom: 1rem;
+}
+
+.suggestion-title {
+    color: var(--primary-blue);
+    font-size: 1.2rem;
+    font-weight: bold;
+    flex: 1;
+}
+
+.suggestion-author {
+    font-size: 0.85rem;
+    color: #999;
+    font-style: italic;
+}
+
+.suggestion-text {
+    color: var(--dark-gray);
+    margin-bottom: 1.5rem;
+    line-height: 1.6;
+    font-size: 0.95rem;
+}
+
+.suggestion-actions {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.like-btn {
+    background: linear-gradient(135deg, var(--lighter-blue), var(--white));
+    border: 2px solid var(--light-blue);
+    color: var(--light-blue);
+    padding: 8px 15px;
+    border-radius: 20px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.like-btn:hover {
+    background: linear-gradient(135deg, var(--light-blue), var(--lighter-blue));
+    color: var(--white);
+    transform: scale(1.05);
+}
+
+.like-btn.liked {
+    background: linear-gradient(135deg, var(--light-blue), var(--primary-blue));
+    color: var(--white);
+    border-color: var(--primary-blue);
+}
+
+.like-count {
+    font-size: 0.9rem;
+    font-weight: bold;
+}
+
+.comments-section {
+    border-top: 2px solid var(--lighter-blue);
+    padding-top: 1rem;
+}
+
+.comments-title {
+    font-weight: bold;
+    color: var(--primary-blue);
+    margin-bottom: 1rem;
+    font-size: 0.95rem;
+}
+
+.comment-input-group {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+}
+
+.comment-input-group input {
+    flex: 1;
+    padding: 8px 12px;
+    border: 2px solid #e0e0e0;
+    border-radius: 8px;
+    font-size: 0.9rem;
+}
+
+.comment-input-group input:focus {
+    outline: none;
+    border-color: var(--light-blue);
+}
+
+.comment-btn {
+    background-color: var(--light-blue);
+    color: var(--white);
+    border: none;
+    padding: 8px 15px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background-color 0.3s ease;
+}
+
+.comment-btn:hover {
+    background-color: var(--primary-blue);
+}
+
+.comments-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.8rem;
+}
+
+.comment {
+    background: var(--lighter-blue);
+    padding: 10px 12px;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    line-height: 1.4;
+}
+
+.comment-author {
+    font-weight: bold;
+    color: var(--primary-blue);
+}
+
+.comment-text {
+    color: var(--dark-gray);
+    margin-top: 0.3rem;
+}
+
+.no-comments {
+    color: #999;
+    font-style: italic;
+    font-size: 0.9rem;
+}
+
+.no-suggestions {
+    text-align: center;
+    color: #999;
+    padding: 2rem;
+    font-style: italic;
+}
+
+/* Events Section */
+.events {
+    padding: 80px 20px;
+    background-color: var(--white);
+}
+
+.events h2 {
+    text-align: center;
+    font-size: 2.5rem;
+    margin-bottom: 3rem;
+    color: var(--primary-blue);
+    position: relative;
+    padding-bottom: 1rem;
+}
+
+.events h2::after {
+    content: '';
+    display: block;
+    width: 100px;
+    height: 4px;
+    background: linear-gradient(90deg, var(--light-blue), var(--primary-blue));
+    margin: 1rem auto 0;
+}
+
+.events-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 2rem;
+}
+
+.event-card {
+    background: linear-gradient(135deg, var(--lighter-blue) 0%, var(--white) 100%);
+    padding: 2rem;
+    border-radius: 15px;
+    text-align: center;
+    transition: all 0.3s ease;
+    border: 2px solid transparent;
+}
+
+.event-card:hover {
+    border-color: var(--light-blue);
+    transform: translateY(-10px);
+    box-shadow: 0 10px 30px rgba(0, 51, 102, 0.15);
+}
+
+.event-icon {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+}
+
+.event-card h3 {
+    color: var(--primary-blue);
+    margin-bottom: 1rem;
+    font-size: 1.3rem;
+}
+
+.event-card p {
+    color: var(--dark-gray);
+    line-height: 1.6;
+}
+
+
+
+/* Footer */
+footer {
+    background-color: var(--primary-blue);
+    color: var(--white);
+    padding: 2rem 0;
+    text-align: center;
+    border-top: 3px solid var(--light-blue);
+}
+
+footer .container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.social-links {
+    display: flex;
+    gap: 1.5rem;
+}
+
+.social-links a {
+    color: var(--white);
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+.social-links a:hover {
+    color: var(--accent-gold);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .hamburger {
+        display: flex;
+    }
+
+    .nav-links {
+        display: none;
+    }
+
+    .hero-content h2 {
+        font-size: 2rem;
+    }
+
+    .hero-content p {
+        font-size: 1rem;
+    }
+
+    footer .container {
+        flex-direction: column;
+        gap: 1rem;
+    }
+
+    .events-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .suggestions-list {
+        grid-template-columns: 1fr;
+    }
+
+    .suggestion-form {
+        max-width: 100%;
+    }
+
+    .comment-input-group {
+        flex-direction: column;
+    }
+
+    .comment-btn {
+        width: 100%;
+    }
+}
+
+@media (max-width: 480px) {
+    .hero-content h2 {
+        font-size: 1.5rem;
+    }
+
+    .about h2,
+    .events h2,
+    .contact h2 {
+        font-size: 1.8rem;
+    }
+
+    .logo h1 {
+        font-size: 1.3rem;
+    }
+
+    .logo p {
+        display: none;
+    }
+
+    .nav-links {
+        gap: 1rem;
+    }
+}

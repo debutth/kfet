@@ -3,12 +3,14 @@ import { db, auth } from './firebase-config.js';
 import { 
     collection, 
     addDoc, 
-    updateDoc, 
+    updateDoc,
+    deleteDoc,
     doc, 
+    getDoc,
     onSnapshot,
     query,
     orderBy,
-    serverTimestamp  // ✅ FIX 1 : ajout de serverTimestamp
+    serverTimestamp
 } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore.js";
 import { 
     createUserWithEmailAndPassword, 
@@ -22,13 +24,30 @@ import {
 class AuthManager {
     constructor() {
         this.currentUser = null;
+        this.isAdmin = false;
         this.init();
     }
 
     init() {
-        onAuthStateChanged(auth, (user) => {
+        onAuthStateChanged(auth, async (user) => {
             this.currentUser = user;
+            this.isAdmin = false;
+
+            if (user) {
+                // Vérifie si l'utilisateur est admin dans Firestore
+                try {
+                    const adminDoc = await getDoc(doc(db, 'admins', user.uid));
+                    this.isAdmin = adminDoc.exists() && adminDoc.data().isAdmin === true;
+                } catch (e) {
+                    this.isAdmin = false;
+                }
+            }
+
             this.updateUI();
+            // Re-render les suggestions pour afficher/cacher les boutons admin
+            if (window.suggestionsManager) {
+                suggestionsManager.renderSuggestions();
+            }
         });
     }
 
@@ -76,10 +95,12 @@ class AuthManager {
         if (this.currentUser) {
             const displayName = this.currentUser.displayName || this.currentUser.email.split('@')[0];
             const avatarLetter = displayName.charAt(0).toUpperCase();
+            const adminBadge = this.isAdmin ? '<span class="admin-badge">⚙️ Admin</span>' : '';
             authLink.innerHTML = `
                 <div class="user-info">
                     <div class="user-avatar">${avatarLetter}</div>
                     <span>${displayName}</span>
+                    ${adminBadge}
                     <button class="logout-btn" onclick="authManager.logout()">Déconnexion</button>
                 </div>
             `;
@@ -141,13 +162,40 @@ class SuggestionsManager {
                 title, text,
                 likes: [],
                 comments: [],
-                createdAt: serverTimestamp()  // ✅ FIX 2 : serverTimestamp() au lieu de new Date()
+                createdAt: serverTimestamp()
             });
             document.querySelector('.suggestion-form').reset();
             alert('Merci pour ta suggestion ! 🎉');
         } catch (error) {
             console.error('Erreur:', error);
             alert('Erreur lors de l\'envoi');
+        }
+    }
+
+    async deleteSuggestion(firebaseId) {
+        if (!authManager.isAdmin) return;
+        if (!confirm('Supprimer cette suggestion ?')) return;
+        try {
+            await deleteDoc(doc(db, 'suggestions', firebaseId));
+        } catch (error) {
+            console.error('Erreur suppression:', error);
+            alert('Erreur lors de la suppression.');
+        }
+    }
+
+    async deleteComment(firebaseId, commentIndex) {
+        if (!authManager.isAdmin) return;
+        if (!confirm('Supprimer ce commentaire ?')) return;
+        try {
+            const suggestion = this.suggestions.find(s => s.firebaseId === firebaseId);
+            if (suggestion) {
+                const comments = [...(suggestion.comments || [])];
+                comments.splice(commentIndex, 1);
+                await updateDoc(doc(db, 'suggestions', firebaseId), { comments });
+            }
+        } catch (error) {
+            console.error('Erreur suppression commentaire:', error);
+            alert('Erreur lors de la suppression.');
         }
     }
 
@@ -214,16 +262,31 @@ class SuggestionsManager {
             return;
         }
 
+        const isAdmin = authManager.isAdmin;
+
         container.innerHTML = this.suggestions.map(suggestion => {
             const likes = suggestion.likes || [];
             const userId = authManager.currentUser ? authManager.currentUser.uid : null;
             const hasLiked = userId && likes.includes(userId);
 
+            const commentsHtml = (suggestion.comments || []).length > 0
+                ? suggestion.comments.map((comment, index) => `
+                    <div class="comment">
+                        <span class="comment-author">${this.escapeHtml(comment.author)}:</span>
+                        <span class="comment-text">${this.escapeHtml(comment.text)}</span>
+                        ${isAdmin ? `<button class="delete-comment-btn" onclick="suggestionsManager.deleteComment('${suggestion.firebaseId}', ${index})" title="Supprimer">🗑️</button>` : ''}
+                    </div>
+                `).join('')
+                : '<div class="no-comments">Aucun commentaire pour le moment</div>';
+
             return `
                 <div class="suggestion-card" data-id="${suggestion.firebaseId}">
                     <div class="suggestion-header">
                         <div class="suggestion-title">${this.escapeHtml(suggestion.title)}</div>
-                        <div class="suggestion-author">${this.escapeHtml(suggestion.author)}</div>
+                        <div class="suggestion-meta">
+                            <span class="suggestion-author">${this.escapeHtml(suggestion.author)}</span>
+                            ${isAdmin ? `<button class="delete-suggestion-btn" onclick="suggestionsManager.deleteSuggestion('${suggestion.firebaseId}')">🗑️ Supprimer</button>` : ''}
+                        </div>
                     </div>
                     <div class="suggestion-text">${this.escapeHtml(suggestion.text)}</div>
                     <div class="suggestion-actions">
@@ -244,15 +307,7 @@ class SuggestionsManager {
                             <button class="comment-btn" onclick="suggestionsManager.addComment('${suggestion.firebaseId}')">Poster</button>
                         </div>
                         <div class="comments-list">
-                            ${(suggestion.comments || []).length > 0 
-                                ? suggestion.comments.map(comment => `
-                                    <div class="comment">
-                                        <span class="comment-author">${this.escapeHtml(comment.author)}:</span>
-                                        <span class="comment-text">${this.escapeHtml(comment.text)}</span>
-                                    </div>
-                                `).join('')
-                                : '<div class="no-comments">Aucun commentaire pour le moment</div>'
-                            }
+                            ${commentsHtml}
                         </div>
                     </div>
                 </div>
@@ -271,7 +326,7 @@ class SuggestionsManager {
 const authManager = new AuthManager();
 const suggestionsManager = new SuggestionsManager();
 
-// ✅ FIX 3 : exposition sur window pour les onclick inline du HTML
+// Exposition sur window pour les onclick inline du HTML
 window.authManager = authManager;
 window.suggestionsManager = suggestionsManager;
 window.showAuthModal = showAuthModal;
@@ -303,9 +358,8 @@ function showSignupTab() {
     document.querySelectorAll('.tab-btn')[1].classList.add('active');
 }
 
-// ========== DOM EVENT LISTENERS (AFTER DOMContentLoaded) ==========
+// ========== DOM EVENT LISTENERS ==========
 document.addEventListener('DOMContentLoaded', () => {
-    // Mobile Menu Toggle
     const hamburger = document.querySelector('.hamburger');
     const navLinks = document.querySelector('.nav-links');
     let menuOpen = false;
@@ -318,7 +372,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Smooth Scroll for Navigation Links
     document.querySelectorAll('a[href^="#"]').forEach(anchor => {
         anchor.addEventListener('click', function (e) {
             e.preventDefault();
@@ -330,7 +383,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
-    // Auth Form Handlers
     const loginForm = document.getElementById('loginForm');
     if (loginForm) {
         loginForm.addEventListener('submit', async (e) => {
@@ -370,7 +422,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Navbar Background Change on Scroll
     window.addEventListener('scroll', () => {
         const navbar = document.querySelector('.navbar');
         if (window.scrollY > 50) {
@@ -380,7 +431,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // Close modal when clicking outside
     window.onclick = function(event) {
         const modal = document.getElementById('auth-modal');
         if (event.target == modal) {
@@ -388,7 +438,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
-    // Responsive Mobile Menu
     const navItems = document.querySelectorAll('.nav-links li');
     navItems.forEach(item => {
         item.addEventListener('click', () => {
@@ -398,7 +447,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
-    // Window Resize Handler
     window.addEventListener('resize', () => {
         if (window.innerWidth > 768) {
             if (navLinks) navLinks.style.display = 'flex';

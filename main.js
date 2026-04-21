@@ -20,11 +20,31 @@ import {
     updateProfile
 } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-auth.js";
 
+// ========== AVATARS ==========
+const AVATARS = [
+    { id: 'shark',  emoji: '🦈' },
+    { id: 'rocket', emoji: '🚀' },
+    { id: 'cat',    emoji: '🐱' },
+    { id: 'robot',  emoji: '🤖' },
+    { id: 'pizza',  emoji: '🍕' },
+    { id: 'dragon', emoji: '🐲' },
+    { id: 'ghost',  emoji: '👻' },
+    { id: 'alien',  emoji: '👾' },
+    { id: 'cowboy', emoji: '🤠' },
+    { id: 'wizard', emoji: '🧙' },
+];
+
+function getAvatarEmoji(avatarId) {
+    const av = AVATARS.find(a => a.id === avatarId);
+    return av ? av.emoji : null;
+}
+
 // ========== AUTH MANAGER ==========
 class AuthManager {
     constructor() {
         this.currentUser = null;
         this.isAdmin = false;
+        this.avatarId = 'shark';
         this.init();
     }
 
@@ -32,19 +52,23 @@ class AuthManager {
         onAuthStateChanged(auth, async (user) => {
             this.currentUser = user;
             this.isAdmin = false;
+            this.avatarId = 'shark';
 
             if (user) {
-                // Vérifie si l'utilisateur est admin dans Firestore
                 try {
                     const adminDoc = await getDoc(doc(db, 'admins', user.uid));
                     this.isAdmin = adminDoc.exists() && adminDoc.data().isAdmin === true;
-                } catch (e) {
-                    this.isAdmin = false;
-                }
+                } catch (e) {}
+
+                try {
+                    const userDoc = await getDoc(doc(db, 'users', user.uid));
+                    if (userDoc.exists() && userDoc.data().avatarId) {
+                        this.avatarId = userDoc.data().avatarId;
+                    }
+                } catch (e) {}
             }
 
             this.updateUI();
-            // Re-render les suggestions pour afficher/cacher les boutons admin
             if (window.suggestionsManager) {
                 suggestionsManager.renderSuggestions();
             }
@@ -94,11 +118,13 @@ class AuthManager {
         const authLink = document.getElementById('auth-link');
         if (this.currentUser) {
             const displayName = this.currentUser.displayName || this.currentUser.email.split('@')[0];
-            const avatarLetter = displayName.charAt(0).toUpperCase();
+            const avatarEmoji = getAvatarEmoji(this.avatarId);
             const adminBadge = this.isAdmin ? '<span class="admin-badge">⚙️ Admin</span>' : '';
             authLink.innerHTML = `
                 <div class="user-info">
-                    <div class="user-avatar">${avatarLetter}</div>
+                    <a href="profile.html" class="user-avatar-btn" title="Mon profil">
+                        ${avatarEmoji}
+                    </a>
                     <span>${displayName}</span>
                     ${adminBadge}
                     <button class="logout-btn" onclick="authManager.logout()">Déconnexion</button>
@@ -159,6 +185,7 @@ class SuggestionsManager {
             await addDoc(this.suggestionsRef, {
                 author: authManager.currentUser.displayName || authManager.currentUser.email.split('@')[0],
                 authorId: authManager.currentUser.uid,
+                authorAvatar: authManager.avatarId,
                 title, text,
                 likes: [],
                 comments: [],
@@ -239,6 +266,7 @@ class SuggestionsManager {
                 const newComment = {
                     author: authManager.currentUser.displayName || authManager.currentUser.email.split('@')[0],
                     authorId: authManager.currentUser.uid,
+                    authorAvatar: authManager.avatarId,
                     text: commentText,
                     createdAt: new Date().toLocaleString('fr-FR')
                 };
@@ -268,23 +296,27 @@ class SuggestionsManager {
             const likes = suggestion.likes || [];
             const userId = authManager.currentUser ? authManager.currentUser.uid : null;
             const hasLiked = userId && likes.includes(userId);
+            const authorEmoji = getAvatarEmoji(suggestion.authorAvatar) || '🦈';
 
             const commentsHtml = (suggestion.comments || []).length > 0
-                ? suggestion.comments.map((comment, index) => `
+                ? suggestion.comments.map((comment, index) => {
+                    const commentEmoji = getAvatarEmoji(comment.authorAvatar) || '🦈';
+                    return `
                     <div class="comment">
+                        <span class="comment-avatar">${commentEmoji}</span>
                         <span class="comment-author">${this.escapeHtml(comment.author)}:</span>
                         <span class="comment-text">${this.escapeHtml(comment.text)}</span>
                         ${isAdmin ? `<button class="delete-comment-btn" onclick="suggestionsManager.deleteComment('${suggestion.firebaseId}', ${index})" title="Supprimer">🗑️</button>` : ''}
                     </div>
-                `).join('')
+                `}).join('')
                 : '<div class="no-comments">Aucun commentaire pour le moment</div>';
 
             return `
-                <div class="suggestion-card" data-id="${suggestion.firebaseId}">
+                <div class="suggestion-card">
                     <div class="suggestion-header">
                         <div class="suggestion-title">${this.escapeHtml(suggestion.title)}</div>
                         <div class="suggestion-meta">
-                            <span class="suggestion-author">${this.escapeHtml(suggestion.author)}</span>
+                            <span class="suggestion-author">${authorEmoji} ${this.escapeHtml(suggestion.author)}</span>
                             ${isAdmin ? `<button class="delete-suggestion-btn" onclick="suggestionsManager.deleteSuggestion('${suggestion.firebaseId}')">🗑️ Supprimer</button>` : ''}
                         </div>
                     </div>
@@ -298,17 +330,10 @@ class SuggestionsManager {
                     <div class="comments-section">
                         <div class="comments-title">💬 Commentaires (${(suggestion.comments || []).length})</div>
                         <div class="comment-input-group">
-                            <input 
-                                type="text" 
-                                id="comment-input-${suggestion.firebaseId}" 
-                                placeholder="Ajoute un commentaire..."
-                                maxlength="200"
-                            >
+                            <input type="text" id="comment-input-${suggestion.firebaseId}" placeholder="Ajoute un commentaire..." maxlength="200">
                             <button class="comment-btn" onclick="suggestionsManager.addComment('${suggestion.firebaseId}')">Poster</button>
                         </div>
-                        <div class="comments-list">
-                            ${commentsHtml}
-                        </div>
+                        <div class="comments-list">${commentsHtml}</div>
                     </div>
                 </div>
             `;
@@ -326,7 +351,6 @@ class SuggestionsManager {
 const authManager = new AuthManager();
 const suggestionsManager = new SuggestionsManager();
 
-// Exposition sur window pour les onclick inline du HTML
 window.authManager = authManager;
 window.suggestionsManager = suggestionsManager;
 window.showAuthModal = showAuthModal;
@@ -374,8 +398,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
     document.querySelectorAll('a[href^="#"]').forEach(anchor => {
         anchor.addEventListener('click', function (e) {
+            const href = this.getAttribute('href');
+            if (href === '#') return;
             e.preventDefault();
-            const target = document.querySelector(this.getAttribute('href'));
+            const target = document.querySelector(href);
             if (target) {
                 target.scrollIntoView({ behavior: 'smooth' });
                 if (navLinks) navLinks.style.display = 'none';
@@ -433,23 +459,17 @@ document.addEventListener('DOMContentLoaded', () => {
 
     window.onclick = function(event) {
         const modal = document.getElementById('auth-modal');
-        if (event.target == modal) {
-            closeAuthModal();
-        }
+        if (event.target == modal) closeAuthModal();
     };
 
     const navItems = document.querySelectorAll('.nav-links li');
     navItems.forEach(item => {
         item.addEventListener('click', () => {
-            if (navLinks && window.innerWidth < 768) {
-                navLinks.style.display = 'none';
-            }
+            if (navLinks && window.innerWidth < 768) navLinks.style.display = 'none';
         });
     });
 
     window.addEventListener('resize', () => {
-        if (window.innerWidth > 768) {
-            if (navLinks) navLinks.style.display = 'flex';
-        }
+        if (window.innerWidth > 768 && navLinks) navLinks.style.display = 'flex';
     });
 });

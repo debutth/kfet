@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mon Profil – BDE Polytech Marseille</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        /* ===== PROFILE PAGE SPECIFIC STYLES ===== */
+        .profile-page {
+            min-height: 100vh;
+            background: linear-gradient(160deg, #f0f4ff 0%, #e8f1ff 60%, #fff 100%);
+            padding: 60px 20px;
+        }
+
+        .profile-container {
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        .profile-header {
+            text-align: center;
+            margin-bottom: 40px;
+            animation: dropIn 0.7s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+        }
+
+        .profile-header h2 {
+            font-size: 2.2rem;
+            color: var(--primary-blue);
+            margin-bottom: 0.3rem;
+        }
+
+        .profile-header p {
+            color: #888;
+            font-size: 0.95rem;
+        }
+
+        /* ===== CURRENT AVATAR DISPLAY ===== */
+        .current-avatar-wrap {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 10px;
+            animation: dropIn 0.7s cubic-bezier(0.34, 1.56, 0.64, 1) 0.1s both;
+        }
+
+        .current-avatar {
+            width: 110px;
+            height: 110px;
+            border-radius: 50%;
+            border: 4px solid var(--light-blue);
+            box-shadow: 0 8px 30px rgba(0, 85, 204, 0.25);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3.5rem;
+            background: white;
+            transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+            cursor: default;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .current-avatar:hover {
+            transform: scale(1.07) rotate(-3deg);
+        }
+
+        /* ===== PROFILE CARD ===== */
+        .profile-card {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 8px 30px rgba(0, 51, 102, 0.1);
+            overflow: hidden;
+            animation: dropIn 0.7s cubic-bezier(0.34, 1.56, 0.64, 1) 0.2s both;
+        }
+
+        .profile-card-section {
+            padding: 28px 32px;
+            border-bottom: 2px solid var(--lighter-blue);
+        }
+
+        .profile-card-section:last-child {
+            border-bottom: none;
+        }
+
+        .section-title {
+            font-size: 1rem;
+            font-weight: bold;
+            color: var(--primary-blue);
+            margin-bottom: 18px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .section-title::before {
+            content: '';
+            display: inline-block;
+            width: 4px;
+            height: 18px;
+            background: linear-gradient(to bottom, var(--light-blue), var(--primary-blue));
+            border-radius: 2px;
+        }
+
+        /* ===== NAME EDIT ===== */
+        .name-edit-group {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+        }
+
+        .name-edit-group input {
+            flex: 1;
+            padding: 12px 16px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-family: inherit;
+            transition: border-color 0.3s, box-shadow 0.3s;
+            color: var(--dark-gray);
+        }
+
+        .name-edit-group input:focus {
+            outline: none;
+            border-color: var(--light-blue);
+            box-shadow: 0 0 0 3px rgba(0, 85, 204, 0.12);
+        }
+
+        .save-name-btn {
+            padding: 12px 22px;
+            background: linear-gradient(135deg, var(--light-blue), var(--primary-blue));
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-weight: bold;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: transform 0.2s, box-shadow 0.2s;
+            white-space: nowrap;
+        }
+
+        .save-name-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 51, 102, 0.3);
+        }
+
+        .save-name-btn:active {
+            transform: scale(0.97);
+        }
+
+        /* ===== AVATAR GRID ===== */
+        .avatar-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 14px;
+        }
+
+        .avatar-option {
+            aspect-ratio: 1;
+            border-radius: 50%;
+            border: 3px solid transparent;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.2rem;
+            cursor: pointer;
+            background: var(--lighter-blue);
+            transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), border-color 0.2s, box-shadow 0.2s;
+            position: relative;
+        }
+
+        .avatar-option:hover {
+            transform: scale(1.18) rotate(-5deg);
+            border-color: var(--light-blue);
+            box-shadow: 0 6px 18px rgba(0, 85, 204, 0.2);
+        }
+
+        .avatar-option.selected {
+            border-color: var(--light-blue);
+            box-shadow: 0 0 0 3px rgba(0, 85, 204, 0.2), 0 6px 18px rgba(0, 85, 204, 0.2);
+            background: white;
+            transform: scale(1.1);
+        }
+
+        .avatar-option.selected::after {
+            content: '✓';
+            position: absolute;
+            bottom: -2px;
+            right: -2px;
+            width: 20px;
+            height: 20px;
+            background: var(--light-blue);
+            color: white;
+            border-radius: 50%;
+            font-size: 0.7rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+
+        /* SVG Avatars inside each option */
+        .avatar-option svg {
+            width: 70%;
+            height: 70%;
+        }
+
+        /* ===== SAVE AVATAR BTN ===== */
+        .save-avatar-btn {
+            width: 100%;
+            padding: 13px;
+            background: linear-gradient(135deg, var(--light-blue), var(--primary-blue));
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-weight: bold;
+            font-size: 1rem;
+            cursor: pointer;
+            margin-top: 18px;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .save-avatar-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 18px rgba(0, 51, 102, 0.3);
+        }
+
+        /* ===== FEEDBACK MESSAGE ===== */
+        .profile-message {
+            text-align: center;
+            padding: 10px 16px;
+            border-radius: 8px;
+            font-weight: bold;
+            font-size: 0.9rem;
+            margin-top: 12px;
+            display: none;
+        }
+
+        .profile-message.success {
+            background: #d4edda;
+            color: #155724;
+            display: block;
+            animation: fadeInMsg 0.3s ease;
+        }
+
+        .profile-message.error {
+            background: #f8d7da;
+            color: #721c24;
+            display: block;
+            animation: shake 0.4s ease;
+        }
+
+        @keyframes fadeInMsg {
+            from { opacity: 0; transform: translateY(5px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+
+        /* ===== BACK LINK ===== */
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            color: var(--light-blue);
+            font-weight: bold;
+            text-decoration: none;
+            margin-bottom: 28px;
+            font-size: 0.95rem;
+            transition: gap 0.2s ease;
+        }
+
+        .back-link:hover {
+            gap: 10px;
+        }
+
+        /* ===== USER INFO EMAIL ===== */
+        .user-email-display {
+            background: var(--lighter-blue);
+            border-radius: 8px;
+            padding: 10px 14px;
+            font-size: 0.9rem;
+            color: var(--primary-blue);
+            font-weight: 500;
+        }
+
+        @media (max-width: 500px) {
+            .avatar-grid { grid-template-columns: repeat(5, 1fr); gap: 8px; }
+            .avatar-option { font-size: 1.6rem; }
+            .name-edit-group { flex-direction: column; }
+            .save-name-btn { width: 100%; }
+            .profile-card-section { padding: 20px 18px; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="container">
+            <div class="logo">
+                <img src="logo.png" alt="Logo BDE Polytech Marseille" class="logo-img">
+                <div class="logo-text">
+                    <h1>BDE</h1>
+                    <p>Polytech Marseille</p>
+                </div>
+            </div>
+            <ul class="nav-links">
+                <li><a href="index.html">Accueil</a></li>
+                <li><a href="index.html#suggestions">Suggestions</a></li>
+            </ul>
+            <div class="hamburger">
+                <span></span><span></span><span></span>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Profile Page -->
+    <main class="profile-page">
+        <div class="profile-container">
+
+            <a href="index.html" class="back-link">← Retour au site</a>
+
+            <!-- Current avatar -->
+            <div class="current-avatar-wrap">
+                <div class="current-avatar" id="bigAvatar">🦈</div>
+            </div>
+
+            <div class="profile-header">
+                <h2 id="profileDisplayName">Chargement...</h2>
+                <p id="profileEmail"></p>
+            </div>
+
+            <div class="profile-card">
+
+                <!-- Changer le nom -->
+                <div class="profile-card-section">
+                    <div class="section-title">Nom d'utilisateur</div>
+                    <div class="name-edit-group">
+                        <input type="text" id="newNameInput" placeholder="Nouveau nom..." maxlength="30">
+                        <button class="save-name-btn" onclick="saveName()">Enregistrer</button>
+                    </div>
+                    <div class="profile-message" id="nameMessage"></div>
+                </div>
+
+                <!-- Choisir un avatar -->
+                <div class="profile-card-section">
+                    <div class="section-title">Choisir un avatar</div>
+                    <div class="avatar-grid" id="avatarGrid"></div>
+                    <button class="save-avatar-btn" onclick="saveAvatar()">💾 Enregistrer l'avatar</button>
+                    <div class="profile-message" id="avatarMessage"></div>
+                </div>
+
+            </div>
+        </div>
+    </main>
+
+    <script type="module">
+        import { auth, db } from './firebase-config.js';
+        import { onAuthStateChanged, updateProfile } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-auth.js";
+        import { doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore.js";
+
+        // 10 avatars SVG cartoon
+        const AVATARS = [
+            { id: 'shark',   emoji: '🦈', label: 'Requin' },
+            { id: 'rocket',  emoji: '🚀', label: 'Fusée' },
+            { id: 'cat',     emoji: '🐱', label: 'Chat' },
+            { id: 'robot',   emoji: '🤖', label: 'Robot' },
+            { id: 'pizza',   emoji: '🍕', label: 'Pizza' },
+            { id: 'dragon',  emoji: '🐲', label: 'Dragon' },
+            { id: 'ghost',   emoji: '👻', label: 'Fantôme' },
+            { id: 'alien',   emoji: '👾', label: 'Alien' },
+            { id: 'cowboy',  emoji: '🤠', label: 'Cowboy' },
+            { id: 'wizard',  emoji: '🧙', label: 'Mage' },
+        ];
+
+        let currentUser = null;
+        let selectedAvatarId = null;
+
+        // Build avatar grid
+        const grid = document.getElementById('avatarGrid');
+        AVATARS.forEach(av => {
+            const div = document.createElement('div');
+            div.className = 'avatar-option';
+            div.setAttribute('data-id', av.id);
+            div.setAttribute('title', av.label);
+            div.textContent = av.emoji;
+            div.addEventListener('click', () => selectAvatar(av.id));
+            grid.appendChild(div);
+        });
+
+        function selectAvatar(id) {
+            selectedAvatarId = id;
+            document.querySelectorAll('.avatar-option').forEach(el => {
+                el.classList.toggle('selected', el.dataset.id === id);
+            });
+            // Preview
+            const av = AVATARS.find(a => a.id === id);
+            if (av) document.getElementById('bigAvatar').textContent = av.emoji;
+        }
+
+        function showMessage(elementId, text, type) {
+            const el = document.getElementById(elementId);
+            el.textContent = text;
+            el.className = 'profile-message ' + type;
+            setTimeout(() => { el.className = 'profile-message'; }, 3000);
+        }
+
+        // Auth state
+        onAuthStateChanged(auth, async (user) => {
+            if (!user) {
+                window.location.href = 'index.html';
+                return;
+            }
+            currentUser = user;
+            document.getElementById('profileDisplayName').textContent = user.displayName || user.email.split('@')[0];
+            document.getElementById('profileEmail').textContent = user.email;
+            document.getElementById('newNameInput').value = user.displayName || '';
+
+            // Load saved avatar from Firestore
+            try {
+                const snap = await getDoc(doc(db, 'users', user.uid));
+                if (snap.exists() && snap.data().avatarId) {
+                    selectAvatar(snap.data().avatarId);
+                } else {
+                    selectAvatar('shark'); // défaut
+                }
+            } catch(e) {
+                selectAvatar('shark');
+            }
+        });
+
+        // Save name
+        window.saveName = async function() {
+            const newName = document.getElementById('newNameInput').value.trim();
+            if (!newName) return showMessage('nameMessage', 'Le nom ne peut pas être vide.', 'error');
+            try {
+                await updateProfile(currentUser, { displayName: newName });
+                document.getElementById('profileDisplayName').textContent = newName;
+                showMessage('nameMessage', '✅ Nom mis à jour !', 'success');
+            } catch(e) {
+                showMessage('nameMessage', 'Erreur lors de la mise à jour.', 'error');
+            }
+        };
+
+        // Save avatar
+        window.saveAvatar = async function() {
+            if (!selectedAvatarId) return showMessage('avatarMessage', 'Sélectionne un avatar.', 'error');
+            try {
+                await setDoc(doc(db, 'users', currentUser.uid), { avatarId: selectedAvatarId }, { merge: true });
+                showMessage('avatarMessage', '✅ Avatar enregistré !', 'success');
+            } catch(e) {
+                showMessage('avatarMessage', 'Erreur lors de la sauvegarde.', 'error');
+            }
+        };
+    </script>
+
+</body>
+</html>

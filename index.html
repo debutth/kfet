@@ -11,8 +11,11 @@
     <nav class="navbar">
         <div class="container">
             <div class="logo">
-                <h1>BDE</h1>
-                <p>Polytech Marseille</p>
+                <img src="logo.png" alt="Logo BDE Polytech Marseille" class="logo-img">
+                <div class="logo-text">
+                    <h1>BDE</h1>
+                    <p>Polytech Marseille</p>
+                </div>
             </div>
             <ul class="nav-links">
                 <li><a href="#accueil">Accueil</a></li>
@@ -30,21 +33,19 @@
     <!-- Hero Section -->
     <section id="accueil" class="hero">
         <div class="hero-content">
-            <h2>Bienvenue au BDE</h2>
-            <p>Kfet st Jérome</p>
-            <p class="subtitle">Créons des souvenirs ensemble !</p>
+            <h2 class="animate-hero-title">Bienvenue au BDE</h2>
+            <p class="animate-hero-sub1">Kfet st Jérome</p>
+            <p class="subtitle animate-hero-sub2">Créons des souvenirs ensemble !</p>
         </div>
     </section>
-
-
 
     <!-- Suggestions Section -->
     <section id="suggestions" class="suggestions">
         <div class="container">
-            <h2>Boîte à Suggestions</h2>
-            <p class="suggestions-subtitle">Tes idées nous intéressent ! Propose tes suggestions pour améliorer la kfet de st jérome 💡</p>
+            <h2 class="reveal">Boîte à Suggestions</h2>
+            <p class="suggestions-subtitle reveal">Tes idées nous intéressent ! Propose tes suggestions pour améliorer la kfet St Jérome 💡</p>
             
-            <form class="suggestion-form">
+            <form class="suggestion-form reveal">
                 <div class="form-group">
                     <input type="text" id="suggestionTitle" placeholder="Titre de ta suggestion" required maxlength="100">
                 </div>
@@ -116,5 +117,18 @@
 
     <!-- Firebase -->
     <script type="module" src="main.js"></script>
+
+    <!-- Scroll Reveal Animation -->
+    <script>
+        const reveals = document.querySelectorAll('.reveal');
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('revealed');
+                }
+            });
+        }, { threshold: 0.15 });
+        reveals.forEach(el => observer.observe(el));
+    </script>
 </body>
 </html>

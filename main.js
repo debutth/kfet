@@ -395,4 +395,12 @@ document.addEventListener('DOMContentLoaded', () => {
             if (navLinks) navLinks.style.display = 'flex';
         }
     });
+
+// Expose to window for inline HTML handlers (required because main.js is a module)
+window.authManager = authManager;
+window.suggestionsManager = suggestionsManager;
+window.showAuthModal = showAuthModal;
+window.closeAuthModal = closeAuthModal;
+window.showLoginTab = showLoginTab;
+window.showSignupTab = showSignupTab;
 });

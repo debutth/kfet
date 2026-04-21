@@ -7,7 +7,8 @@ import {
     doc, 
     onSnapshot,
     query,
-    orderBy
+    orderBy,
+    serverTimestamp  // ✅ FIX 1 : ajout de serverTimestamp
 } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore.js";
 import { 
     createUserWithEmailAndPassword, 
@@ -140,7 +141,7 @@ class SuggestionsManager {
                 title, text,
                 likes: [],
                 comments: [],
-                createdAt: new Date()
+                createdAt: serverTimestamp()  // ✅ FIX 2 : serverTimestamp() au lieu de new Date()
             });
             document.querySelector('.suggestion-form').reset();
             alert('Merci pour ta suggestion ! 🎉');
@@ -270,6 +271,14 @@ class SuggestionsManager {
 const authManager = new AuthManager();
 const suggestionsManager = new SuggestionsManager();
 
+// ✅ FIX 3 : exposition sur window pour les onclick inline du HTML
+window.authManager = authManager;
+window.suggestionsManager = suggestionsManager;
+window.showAuthModal = showAuthModal;
+window.closeAuthModal = closeAuthModal;
+window.showLoginTab = showLoginTab;
+window.showSignupTab = showSignupTab;
+
 // ========== AUTH MODAL FUNCTIONS ==========
 function showAuthModal() {
     document.getElementById('auth-modal').style.display = 'block';
@@ -395,12 +404,4 @@ document.addEventListener('DOMContentLoaded', () => {
             if (navLinks) navLinks.style.display = 'flex';
         }
     });
-
-// Expose to window for inline HTML handlers (required because main.js is a module)
-window.authManager = authManager;
-window.suggestionsManager = suggestionsManager;
-window.showAuthModal = showAuthModal;
-window.closeAuthModal = closeAuthModal;
-window.showLoginTab = showLoginTab;
-window.showSignupTab = showSignupTab;
 });

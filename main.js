@@ -72,6 +72,9 @@ class AuthManager {
             if (window.suggestionsManager) {
                 suggestionsManager.renderSuggestions();
             }
+            if (window.productsManager) {
+                productsManager.renderProducts();
+            }
         });
     }
 
@@ -116,6 +119,8 @@ class AuthManager {
 
     updateUI() {
         const authLink = document.getElementById('auth-link');
+        const adminProductForm = document.getElementById('adminProductForm');
+        
         if (this.currentUser) {
             const displayName = this.currentUser.displayName || this.currentUser.email.split('@')[0];
             const avatarEmoji = getAvatarEmoji(this.avatarId);
@@ -130,8 +135,16 @@ class AuthManager {
                     <button class="logout-btn" onclick="authManager.logout()">Déconnexion</button>
                 </div>
             `;
+            // Afficher/masquer le formulaire admin
+            if (adminProductForm) {
+                adminProductForm.style.display = this.isAdmin ? 'block' : 'none';
+            }
         } else {
             authLink.innerHTML = '<a href="#" onclick="showAuthModal()">Se connecter</a>';
+            // Masquer le formulaire admin
+            if (adminProductForm) {
+                adminProductForm.style.display = 'none';
+            }
         }
     }
 }
@@ -347,12 +360,152 @@ class SuggestionsManager {
     }
 }
 
+// ========== PRODUCTS MANAGER ==========
+class ProductsManager {
+    constructor() {
+        this.productsRef = collection(db, 'products');
+        this.products = [];
+        this.filteredProducts = [];
+        this.currentFilter = 'Tous';
+        this.init();
+    }
+
+    async init() {
+        this.setupAdminForm();
+        this.listenToProducts();
+    }
+
+    async listenToProducts() {
+        const q = query(this.productsRef, orderBy('createdAt', 'desc'));
+        onSnapshot(q, (snapshot) => {
+            this.products = [];
+            snapshot.forEach((doc) => {
+                this.products.push({
+                    firebaseId: doc.id,
+                    ...doc.data()
+                });
+            });
+            this.filterByCategory(this.currentFilter);
+        });
+    }
+
+    setupAdminForm() {
+        const addBtn = document.getElementById('addProductBtn');
+        if (addBtn) {
+            addBtn.addEventListener('click', () => this.addProduct());
+        }
+    }
+
+    async addProduct() {
+        if (!authManager.isAdmin) {
+            alert('Seuls les admins peuvent ajouter des produits.');
+            return;
+        }
+
+        const name = document.getElementById('productName').value.trim();
+        const category = document.getElementById('productCategory').value.trim();
+        const price = document.getElementById('productPrice').value.trim();
+        const description = document.getElementById('productDescription').value.trim();
+
+        if (!name || !category || !price) {
+            alert('Nom, catégorie et prix obligatoires !');
+            return;
+        }
+
+        try {
+            await addDoc(this.productsRef, {
+                name,
+                category,
+                price,
+                description,
+                createdAt: serverTimestamp()
+            });
+
+            document.getElementById('productName').value = '';
+            document.getElementById('productCategory').value = '';
+            document.getElementById('productPrice').value = '';
+            document.getElementById('productDescription').value = '';
+            alert('Produit ajouté ! 🎉');
+        } catch (error) {
+            console.error('Erreur:', error);
+            alert('Erreur lors de l\'ajout');
+        }
+    }
+
+    async deleteProduct(firebaseId) {
+        if (!authManager.isAdmin) {
+            alert('Seuls les admins peuvent supprimer des produits.');
+            return;
+        }
+
+        if (!confirm('Supprimer ce produit ?')) return;
+
+        try {
+            await deleteDoc(doc(db, 'products', firebaseId));
+        } catch (error) {
+            console.error('Erreur:', error);
+            alert('Erreur lors de la suppression');
+        }
+    }
+
+    filterByCategory(category) {
+        this.currentFilter = category;
+        
+        // Update active button
+        document.querySelectorAll('.filter-btn').forEach(btn => {
+            btn.classList.remove('active');
+            if (btn.textContent.includes(category) || (category === 'Tous' && btn.textContent === 'Tous')) {
+                btn.classList.add('active');
+            }
+        });
+
+        if (category === 'Tous') {
+            this.filteredProducts = this.products;
+        } else {
+            this.filteredProducts = this.products.filter(p => p.category === category);
+        }
+        this.renderProducts();
+    }
+
+    renderProducts() {
+        const container = document.getElementById('productsGrid');
+        if (!container) return;
+
+        if (this.filteredProducts.length === 0) {
+            container.innerHTML = '<div class="no-products">Aucun produit dans cette catégorie 🛒</div>';
+            return;
+        }
+
+        const isAdmin = authManager.isAdmin;
+
+        container.innerHTML = this.filteredProducts.map(product => `
+            <div class="product-card">
+                <div class="product-category">${this.escapeHtml(product.category)}</div>
+                <div class="product-card-header">
+                    <div class="product-name">${this.escapeHtml(product.name)}</div>
+                    <div class="product-price">${this.escapeHtml(product.price)}</div>
+                </div>
+                ${product.description ? `<div class="product-description">${this.escapeHtml(product.description)}</div>` : ''}
+                ${isAdmin ? `<div class="product-actions"><button class="delete-product-btn" onclick="productsManager.deleteProduct('${product.firebaseId}')">🗑️ Supprimer</button></div>` : ''}
+            </div>
+        `).join('');
+    }
+
+    escapeHtml(text) {
+        const div = document.createElement('div');
+        div.textContent = text;
+        return div.innerHTML;
+    }
+}
+
 // ========== GLOBAL INSTANCES ==========
 const authManager = new AuthManager();
 const suggestionsManager = new SuggestionsManager();
+const productsManager = new ProductsManager();
 
 window.authManager = authManager;
 window.suggestionsManager = suggestionsManager;
+window.productsManager = productsManager;
 window.showAuthModal = showAuthModal;
 window.closeAuthModal = closeAuthModal;
 window.showLoginTab = showLoginTab;

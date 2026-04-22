@@ -39,6 +39,50 @@
         </div>
     </section>
 
+    <!-- Produits Section -->
+    <section id="produits" class="produits">
+        <div class="container">
+            <h2 class="reveal">🛍️ Nos Produits</h2>
+            <p class="produits-subtitle reveal">Retrouve tous les articles disponibles à la kfet !</p>
+            
+            <!-- Admin Add Product Form (Hidden by default) -->
+            <div id="adminProductForm" class="admin-product-form" style="display: none;">
+                <h3>Ajouter un produit (Admin)</h3>
+                <div class="admin-form-group">
+                    <input type="text" id="productName" placeholder="Nom du produit (ex: Cannette 33cl)" required maxlength="50">
+                    <select id="productCategory" required>
+                        <option value="">-- Catégorie --</option>
+                        <option value="Boissons">Boissons</option>
+                        <option value="Bonbons">Bonbons</option>
+                        <option value="Snacks">Snacks</option>
+                        <option value="Biscuits">Biscuits</option>
+                        <option value="Fruits">Fruits</option>
+                        <option value="Produits Frais">Produits Frais</option>
+                        <option value="Autre">Autre</option>
+                    </select>
+                    <input type="text" id="productPrice" placeholder="Prix (ex: 1.50€)" required maxlength="20">
+                    <textarea id="productDescription" placeholder="Description courte..." rows="2" maxlength="150"></textarea>
+                    <button type="button" id="addProductBtn" class="admin-btn">Ajouter Produit</button>
+                </div>
+            </div>
+
+            <!-- Filter by Category -->
+            <div class="filter-section">
+                <button class="filter-btn active" onclick="productsManager.filterByCategory('Tous')">Tous</button>
+                <button class="filter-btn" onclick="productsManager.filterByCategory('Boissons')">🥤 Boissons</button>
+                <button class="filter-btn" onclick="productsManager.filterByCategory('Bonbons')">🍬 Bonbons</button>
+                <button class="filter-btn" onclick="productsManager.filterByCategory('Snacks')">🍟 Snacks</button>
+                <button class="filter-btn" onclick="productsManager.filterByCategory('Biscuits')">🍪 Biscuits</button>
+                <button class="filter-btn" onclick="productsManager.filterByCategory('Fruits')">🍎 Fruits</button>
+            </div>
+
+            <!-- Products Grid -->
+            <div class="products-grid" id="productsGrid">
+                <!-- Les produits apparaîtront ici -->
+            </div>
+        </div>
+    </section>
+
     <!-- Suggestions Section -->
     <section id="suggestions" class="suggestions">
         <div class="container">

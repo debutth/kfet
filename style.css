@@ -222,6 +222,225 @@ body {
     transform: translateY(0);
 }
 
+/* ========== PRODUITS SECTION ========== */
+.produits {
+    padding: 80px 20px;
+    background: linear-gradient(135deg, #f0f4ff 0%, #e8f1ff 100%);
+}
+
+.produits h2 {
+    text-align: center;
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+    color: var(--primary-blue);
+    position: relative;
+    padding-bottom: 1rem;
+}
+
+.produits h2::after {
+    content: '';
+    display: block;
+    width: 100px;
+    height: 4px;
+    background: linear-gradient(90deg, var(--light-blue), var(--primary-blue));
+    margin: 1rem auto 0;
+}
+
+.produits-subtitle {
+    text-align: center;
+    font-size: 1.1rem;
+    color: var(--dark-gray);
+    margin-bottom: 2rem;
+}
+
+/* Admin Form */
+.admin-product-form {
+    background: white;
+    padding: 2rem;
+    border-radius: 15px;
+    box-shadow: 0 4px 15px rgba(0, 51, 102, 0.1);
+    margin-bottom: 2rem;
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
+    border-left: 5px solid #ff6b6b;
+}
+
+.admin-product-form h3 {
+    color: #ff6b6b;
+    margin-bottom: 1.5rem;
+    font-size: 1.1rem;
+}
+
+.admin-form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.admin-form-group input,
+.admin-form-group textarea,
+.admin-form-group select {
+    padding: 12px;
+    border: 2px solid #e0e0e0;
+    border-radius: 8px;
+    font-family: inherit;
+    font-size: 1rem;
+    transition: border-color 0.3s ease;
+}
+
+.admin-form-group input:focus,
+.admin-form-group textarea:focus,
+.admin-form-group select:focus {
+    outline: none;
+    border-color: #ff6b6b;
+}
+
+.admin-btn {
+    padding: 12px;
+    background-color: #ff6b6b;
+    color: white;
+    font-weight: bold;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.admin-btn:hover {
+    background-color: #ff5252;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(255, 107, 107, 0.3);
+}
+
+/* Filter Buttons */
+.filter-section {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+    margin-bottom: 3rem;
+}
+
+.filter-btn {
+    padding: 10px 18px;
+    border: 2px solid var(--light-blue);
+    background: white;
+    color: var(--light-blue);
+    border-radius: 20px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: all 0.3s ease;
+}
+
+.filter-btn:hover {
+    background: var(--lighter-blue);
+    transform: translateY(-2px);
+}
+
+.filter-btn.active {
+    background: linear-gradient(135deg, var(--light-blue), var(--primary-blue));
+    color: white;
+    border-color: var(--primary-blue);
+}
+
+/* Products Grid */
+.products-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 2rem;
+    margin-bottom: 2rem;
+}
+
+.product-card {
+    background: white;
+    padding: 1.8rem;
+    border-radius: 15px;
+    box-shadow: 0 4px 15px rgba(0, 51, 102, 0.1);
+    transition: all 0.3s ease;
+    animation: slideIn 0.5s ease;
+    position: relative;
+    border-top: 4px solid var(--light-blue);
+}
+
+.product-card:hover {
+    box-shadow: 0 6px 20px rgba(0, 51, 102, 0.15);
+    transform: translateY(-5px);
+}
+
+.product-category {
+    display: inline-block;
+    background: var(--lighter-blue);
+    color: var(--primary-blue);
+    padding: 4px 10px;
+    border-radius: 12px;
+    font-size: 0.75rem;
+    font-weight: bold;
+    margin-bottom: 0.8rem;
+}
+
+.product-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: start;
+    margin-bottom: 0.8rem;
+}
+
+.product-name {
+    color: var(--primary-blue);
+    font-size: 1.2rem;
+    font-weight: bold;
+    flex: 1;
+}
+
+.product-price {
+    background: linear-gradient(135deg, var(--light-blue), var(--primary-blue));
+    color: white;
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-weight: bold;
+    font-size: 0.9rem;
+    white-space: nowrap;
+    margin-left: 1rem;
+}
+
+.product-description {
+    color: var(--dark-gray);
+    font-size: 0.9rem;
+    line-height: 1.4;
+    margin-bottom: 1rem;
+}
+
+.product-actions {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.delete-product-btn {
+    background: #ff6b6b;
+    color: white;
+    border: none;
+    padding: 8px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 0.85rem;
+    font-weight: bold;
+    transition: all 0.3s ease;
+}
+
+.delete-product-btn:hover {
+    background: #ff5252;
+    transform: scale(1.05);
+}
+
+.no-products {
+    text-align: center;
+    padding: 3rem 2rem;
+    color: #999;
+    font-style: italic;
+    font-size: 1.1rem;
+}
+
 /* ========== SUGGESTIONS SECTION ========== */
 .suggestions {
     padding: 80px 20px;

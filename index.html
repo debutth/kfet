@@ -19,6 +19,17 @@
             </div>
             <ul class="nav-links">
                 <li><a href="#accueil">Accueil</a></li>
+                <li class="nav-dropdown">
+                    <a href="#produits">Produits ▼</a>
+                    <div class="dropdown-menu">
+                        <a href="#produits" onclick="productsManager.filterByCategory('Tous')">Tous les produits</a>
+                        <a href="#produits" onclick="productsManager.filterByCategory('Boissons')">🥤 Boissons</a>
+                        <a href="#produits" onclick="productsManager.filterByCategory('Bonbons')">🍬 Bonbons</a>
+                        <a href="#produits" onclick="productsManager.filterByCategory('Snacks')">🍟 Snacks</a>
+                        <a href="#produits" onclick="productsManager.filterByCategory('Biscuits')">🍪 Biscuits</a>
+                        <a href="#produits" onclick="productsManager.filterByCategory('Fruits')">🍎 Fruits</a>
+                    </div>
+                </li>
                 <li><a href="#suggestions">Suggestions</a></li>
                 <li id="auth-link"><a href="#" onclick="showAuthModal()">Se connecter</a></li>
             </ul>

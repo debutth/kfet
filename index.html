@@ -19,17 +19,6 @@
             </div>
             <ul class="nav-links">
                 <li><a href="#accueil">Accueil</a></li>
-                <li class="nav-dropdown">
-                    <a href="#produits">Produits ▼</a>
-                    <div class="dropdown-menu">
-                        <a href="#produits" onclick="productsManager.filterByCategory('Tous')">Tous les produits</a>
-                        <a href="#produits" onclick="productsManager.filterByCategory('Boissons')">🥤 Boissons</a>
-                        <a href="#produits" onclick="productsManager.filterByCategory('Bonbons')">🍬 Bonbons</a>
-                        <a href="#produits" onclick="productsManager.filterByCategory('Snacks')">🍟 Snacks</a>
-                        <a href="#produits" onclick="productsManager.filterByCategory('Biscuits')">🍪 Biscuits</a>
-                        <a href="#produits" onclick="productsManager.filterByCategory('Fruits')">🍎 Fruits</a>
-                    </div>
-                </li>
                 <li><a href="#suggestions">Suggestions</a></li>
                 <li id="auth-link"><a href="#" onclick="showAuthModal()">Se connecter</a></li>
             </ul>
@@ -55,6 +44,20 @@
         <div class="container">
             <h2 class="reveal">🛍️ Nos Produits</h2>
             <p class="produits-subtitle reveal">Retrouve tous les articles disponibles à la kfet !</p>
+
+            <!-- Admin Categories Management (Hidden by default) -->
+            <div id="adminCategoriesSection" class="admin-categories-section" style="display: none;">
+                <h3>📂 Gestion des Catégories (Admin)</h3>
+                <div class="admin-categories-form">
+                    <div class="categories-input-group">
+                        <input type="text" id="categoryName" placeholder="Nom de la catégorie (ex: Boissons)" required maxlength="30">
+                        <button type="button" id="addCategoryBtn" class="admin-btn">+ Ajouter Catégorie</button>
+                    </div>
+                </div>
+                <div class="categories-list" id="categoriesList">
+                    <!-- Les catégories apparaîtront ici -->
+                </div>
+            </div>
             
             <!-- Admin Add Product Form (Hidden by default) -->
             <div id="adminProductForm" class="admin-product-form" style="display: none;">

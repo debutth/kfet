@@ -428,7 +428,7 @@ class ProductsManager {
             alert('Produit ajouté ! 🎉');
         } catch (error) {
             console.error('Erreur:', error);
-            alert('Erreur lors de l\'ajout');
+            alert('Erreur lors de l\'ajout: ' + error.message);
         }
     }
 

@@ -20,7 +20,6 @@
             <ul class="nav-links">
                 <li><a href="#accueil">Accueil</a></li>
                 <li><a href="#kfets">Nos KFETs</a></li>
-                <li id="auth-link"><a href="#" onclick="showAuthModal()">Se connecter</a></li>
             </ul>
             <div class="hamburger">
                 <span></span>
@@ -74,53 +73,6 @@
             </div>
         </div>
     </footer>
-
-    <!-- Auth Modal -->
-    <div id="auth-modal" class="modal">
-        <div class="modal-content">
-            <span class="close" onclick="closeAuthModal()">&times;</span>
-            <div class="auth-tabs">
-                <button class="tab-btn active" onclick="showLoginTab()">Connexion</button>
-                <button class="tab-btn" onclick="showSignupTab()">Inscription</button>
-            </div>
-            
-            <!-- Login Form -->
-            <div id="login-form" class="auth-form">
-                <h3>Se connecter</h3>
-                <form id="loginForm">
-                    <div class="form-group">
-                        <input type="email" id="loginEmail" placeholder="Email" required>
-                    </div>
-                    <div class="form-group">
-                        <input type="password" id="loginPassword" placeholder="Mot de passe" required>
-                    </div>
-                    <button type="submit" class="auth-btn">Se connecter</button>
-                </form>
-            </div>
-            
-            <!-- Signup Form -->
-            <div id="signup-form" class="auth-form" style="display: none;">
-                <h3>S'inscrire</h3>
-                <form id="signupForm">
-                    <div class="form-group">
-                        <input type="text" id="signupName" placeholder="Nom d'utilisateur" required>
-                    </div>
-                    <div class="form-group">
-                        <input type="email" id="signupEmail" placeholder="Email" required>
-                    </div>
-                    <div class="form-group">
-                        <input type="password" id="signupPassword" placeholder="Mot de passe" required>
-                    </div>
-                    <button type="submit" class="auth-btn">S'inscrire</button>
-                </form>
-            </div>
-            
-            <div id="auth-message" class="auth-message"></div>
-        </div>
-    </div>
-
-    <!-- Firebase -->
-    <script type="module" src="main.js"></script>
 
     <!-- Scroll Reveal Animation -->
     <script>

@@ -1,5 +1,7 @@
 // ========== IMPORTS ==========
-import { db, auth } from './firebase-config.js';
+// import { db, auth } from './firebase-config.js'; // Removed, now using window.db/auth
+const db = window.db;
+const auth = window.auth;
 import { 
     collection, 
     addDoc, 

@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KFET Luminy - BDE Polytech Marseille</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="container">
+            <div class="logo">
+                <img src="logo.png" alt="Logo BDE Polytech Marseille" class="logo-img">
+                <div class="logo-text">
+                    <h1>BDE</h1>
+                    <p>Polytech Marseille</p>
+                </div>
+            </div>
+            <ul class="nav-links">
+                <li><a href="index.html">Accueil</a></li>
+                <li><a href="#suggestions">Suggestions</a></li>
+                <li id="auth-link"><a href="#" onclick="showAuthModal()">Se connecter</a></li>
+            </ul>
+            <div class="hamburger">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section id="accueil" class="hero">
+        <div class="hero-content">
+            <h2 class="animate-hero-title">Bienvenue à la KFET</h2>
+            <p class="animate-hero-sub1">Luminy</p>
+            <p class="subtitle animate-hero-sub2">Proche de la mer, pour une ambiance relaxante !</p>
+        </div>
+    </section>
+
+    <!-- Produits Section -->
+    <section id="produits" class="produits">
+        <div class="container">
+            <h2 class="reveal">🛍️ Nos Produits</h2>
+            <p class="produits-subtitle reveal">Retrouve tous les articles disponibles à la kfet Luminy !</p>
+
+            <!-- Admin Categories Management (Hidden by default) -->
+            <div id="adminCategoriesSection" class="admin-categories-section" style="display: none;">
+                <h3>📂 Gestion des Catégories (Admin)</h3>
+                <div class="admin-categories-form">
+                    <div class="categories-input-group">
+                        <input type="text" id="categoryName" placeholder="Nom de la catégorie (ex: Boissons)" required maxlength="30">
+                        <button type="button" id="addCategoryBtn" class="admin-btn">+ Ajouter Catégorie</button>
+                    </div>
+                </div>
+                <div class="categories-list" id="categoriesList">
+                    <!-- Les catégories apparaîtront ici -->
+                </div>
+            </div>
+            
+            <!-- Admin Add Product Form (Hidden by default) -->
+            <div id="adminProductForm" class="admin-product-form" style="display: none;">
+                <h3>Ajouter un produit (Admin)</h3>
+                <div class="admin-form-group">
+                    <input type="text" id="productName" placeholder="Nom du produit (ex: Cannette 33cl)" required maxlength="50">
+                    <select id="productCategory" required>
+                        <option value="">-- Catégorie --</option>
+                        <option value="Boissons">Boissons</option>
+                        <option value="Bonbons">Bonbons</option>
+                        <option value="Snacks">Snacks</option>
+                        <option value="Biscuits">Biscuits</option>
+                        <option value="Fruits">Fruits</option>
+                        <option value="Produits Frais">Produits Frais</option>
+                        <option value="Autre">Autre</option>
+                    </select>
+                    <input type="text" id="productPrice" placeholder="Prix (ex: 1.50€)" required maxlength="20">
+                    <textarea id="productDescription" placeholder="Description courte..." rows="2" maxlength="150"></textarea>
+                    <button type="button" id="addProductBtn" class="admin-btn">Ajouter Produit</button>
+                </div>
+            </div>
+
+            <!-- Filter by Category -->
+            <div class="filter-section">
+                <button class="filter-btn active" onclick="productsManager.filterByCategory('Tous')">Tous</button>
+                <button class="filter-btn" onclick="productsManager.filterByCategory('Boissons')">🥤 Boissons</button>
+                <button class="filter-btn" onclick="productsManager.filterByCategory('Bonbons')">🍬 Bonbons</button>
+                <button class="filter-btn" onclick="productsManager.filterByCategory('Snacks')">🍟 Snacks</button>
+                <button class="filter-btn" onclick="productsManager.filterByCategory('Biscuits')">🍪 Biscuits</button>
+                <button class="filter-btn" onclick="productsManager.filterByCategory('Fruits')">🍎 Fruits</button>
+            </div>
+
+            <!-- Products Grid -->
+            <div class="products-grid" id="productsGrid">
+                <!-- Les produits apparaîtront ici -->
+            </div>
+        </div>
+    </section>
+
+    <!-- Suggestions Section -->
+    <section id="suggestions" class="suggestions">
+        <div class="container">
+            <h2 class="reveal">Boîte à Suggestions</h2>
+            <p class="suggestions-subtitle reveal">Tes idées nous intéressent ! Propose tes suggestions pour améliorer la kfet Luminy 💡</p>
+            
+            <form class="suggestion-form reveal">
+                <div class="form-group">
+                    <input type="text" id="suggestionTitle" placeholder="Titre de ta suggestion" required maxlength="100">
+                </div>
+                <div class="form-group">
+                    <textarea id="suggestionText" placeholder="Détaille ta suggestion..." rows="4" required maxlength="500"></textarea>
+                </div>
+                <button type="submit" class="submit-btn">Soumettre ma suggestion</button>
+            </form>
+
+            <div class="suggestions-list" id="suggestionsList">
+                <!-- Les suggestions apparaîtront ici -->
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <p>&copy; 2026 BDE Polytech Marseille. Tous droits réservés.</p>
+            <div class="social-links">            
+                <a href="https://www.instagram.com/bde_polytech_marseille/?hl=fr" target="_blank">Instagram</a>                
+            </div>
+        </div>
+    </footer>
+
+    <!-- Auth Modal -->
+    <div id="auth-modal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeAuthModal()">&times;</span>
+            <div class="auth-tabs">
+                <button class="tab-btn active" onclick="showLoginTab()">Connexion</button>
+                <button class="tab-btn" onclick="showSignupTab()">Inscription</button>
+            </div>
+            
+            <!-- Login Form -->
+            <div id="login-form" class="auth-form">
+                <h3>Se connecter</h3>
+                <form id="loginForm">
+                    <div class="form-group">
+                        <input type="email" id="loginEmail" placeholder="Email" required>
+                    </div>
+                    <div class="form-group">
+                        <input type="password" id="loginPassword" placeholder="Mot de passe" required>
+                    </div>
+                    <button type="submit" class="auth-btn">Se connecter</button>
+                </form>
+            </div>
+            
+            <!-- Signup Form -->
+            <div id="signup-form" class="auth-form" style="display: none;">
+                <h3>S'inscrire</h3>
+                <form id="signupForm">
+                    <div class="form-group">
+                        <input type="text" id="signupName" placeholder="Nom d'utilisateur" required>
+                    </div>
+                    <div class="form-group">
+                        <input type="email" id="signupEmail" placeholder="Email" required>
+                    </div>
+                    <div class="form-group">
+                        <input type="password" id="signupPassword" placeholder="Mot de passe" required>
+                    </div>
+                    <button type="submit" class="auth-btn">S'inscrire</button>
+                </form>
+            </div>
+            
+            <div id="auth-message" class="auth-message"></div>
+        </div>
+    </div>
+
+    <!-- Firebase -->
+    <script type="module" src="firebase-config-luminy.js"></script>
+    <script type="module" src="main.js"></script>
+
+    <!-- Scroll Reveal Animation -->
+    <script>
+        const reveals = document.querySelectorAll('.reveal');
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('revealed');
+                }
+            });
+        }, { threshold: 0.15 });
+        reveals.forEach(el => observer.observe(el));
+    </script>
+</body>
+</html>

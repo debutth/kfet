@@ -788,6 +788,45 @@ body {
     animation: commentSlide 0.3s ease;
 }
 
+.comment-actions {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-left: auto;
+}
+
+.comment-like-btn {
+    background: none;
+    border: 2px solid #e0e0e0;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 0.8rem;
+    padding: 4px 8px;
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+    transition: all 0.2s ease;
+    color: #666;
+}
+
+.comment-like-btn:hover {
+    border-color: var(--light-blue);
+    background-color: rgba(52, 152, 219, 0.1);
+    transform: scale(1.05);
+}
+
+.comment-like-btn.liked {
+    border-color: var(--primary-blue);
+    background-color: var(--light-blue);
+    color: var(--white);
+}
+
+.comment-like-btn .like-count {
+    font-weight: bold;
+    min-width: 12px;
+    text-align: center;
+}
+
 @keyframes commentSlide {
     from { opacity: 0; transform: translateX(-10px); }
     to   { opacity: 1; transform: translateX(0); }

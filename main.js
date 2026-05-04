@@ -157,6 +157,15 @@ class SuggestionsManager {
         this.suggestionsRef = collection(db, 'suggestions');
         this.suggestions = [];
         this.init();
+        
+        // Bind methods to maintain correct 'this' context
+        this.toggleCommentLike = this.toggleCommentLike.bind(this);
+        this.toggleCommentDislike = this.toggleCommentDislike.bind(this);
+        this.deleteComment = this.deleteComment.bind(this);
+        this.addComment = this.addComment.bind(this);
+        this.toggleLike = this.toggleLike.bind(this);
+        this.toggleDislike = this.toggleDislike.bind(this);
+        this.deleteSuggestion = this.deleteSuggestion.bind(this);
     }
 
     async init() {
@@ -203,6 +212,7 @@ class SuggestionsManager {
                 authorAvatar: authManager.avatarId,
                 title, text,
                 likes: [],
+                dislikes: [],
                 comments: [],
                 createdAt: serverTimestamp()
             });
@@ -264,6 +274,29 @@ class SuggestionsManager {
         }
     }
 
+    async toggleDislike(firebaseId) {
+        if (!authManager.currentUser) {
+            alert('Vous devez être connecté pour disliker.');
+            showAuthModal();
+            return;
+        }
+
+        try {
+            const suggestion = this.suggestions.find(s => s.firebaseId === firebaseId);
+            if (suggestion) {
+                const dislikes = suggestion.dislikes || [];
+                const userId = authManager.currentUser.uid;
+                const hasDisliked = dislikes.includes(userId);
+                const newDislikes = hasDisliked 
+                    ? dislikes.filter(id => id !== userId)
+                    : [...dislikes, userId];
+                await updateDoc(doc(db, 'suggestions', firebaseId), { dislikes: newDislikes });
+            }
+        } catch (error) {
+            console.error('Erreur:', error);
+        }
+    }
+
     async toggleCommentLike(firebaseId, commentIndex) {
         if (!authManager.currentUser) {
             alert('Vous devez être connecté pour liker.');
@@ -283,7 +316,11 @@ class SuggestionsManager {
                     const newLikes = hasLiked 
                         ? likes.filter(id => id !== userId)
                         : [...likes, userId];
-                    comments[commentIndex] = { ...comment, likes: newLikes };
+                    comments[commentIndex] = { 
+                        ...comment, 
+                        likes: newLikes,
+                        dislikes: comment.dislikes || [] // Ensure dislikes field exists
+                    };
                     await updateDoc(doc(db, 'suggestions', firebaseId), { comments });
                 }
             }
@@ -311,7 +348,11 @@ class SuggestionsManager {
                     const newDislikes = hasDisliked 
                         ? dislikes.filter(id => id !== userId)
                         : [...dislikes, userId];
-                    comments[commentIndex] = { ...comment, dislikes: newDislikes };
+                    comments[commentIndex] = { 
+                        ...comment, 
+                        dislikes: newDislikes,
+                        likes: comment.likes || [] // Ensure likes field exists
+                    };
                     await updateDoc(doc(db, 'suggestions', firebaseId), { comments });
                 }
             }
@@ -367,8 +408,10 @@ class SuggestionsManager {
 
         container.innerHTML = this.suggestions.map(suggestion => {
             const likes = suggestion.likes || [];
+            const dislikes = suggestion.dislikes || [];
             const userId = authManager.currentUser ? authManager.currentUser.uid : null;
             const hasLiked = userId && likes.includes(userId);
+            const hasDisliked = userId && dislikes.includes(userId);
             const authorEmoji = getAvatarEmoji(suggestion.authorAvatar) || '🦈';
 
             const commentsHtml = (suggestion.comments || []).length > 0
@@ -376,9 +419,9 @@ class SuggestionsManager {
                     const commentEmoji = getAvatarEmoji(comment.authorAvatar) || '🦈';
                     const commentLikes = comment.likes || [];
                     const commentDislikes = comment.dislikes || [];
-                    const userId = authManager.currentUser ? authManager.currentUser.uid : null;
-                    const hasLikedComment = userId && commentLikes.includes(userId);
-                    const hasDislikedComment = userId && commentDislikes.includes(userId);
+                    const currentUserId = authManager.currentUser ? authManager.currentUser.uid : null;
+                    const hasLikedComment = currentUserId && commentLikes.includes(currentUserId);
+                    const hasDislikedComment = currentUserId && commentDislikes.includes(currentUserId);
                     return `
                     <div class="comment">
                         <span class="comment-avatar">${commentEmoji}</span>
@@ -413,6 +456,10 @@ class SuggestionsManager {
                         <button class="like-btn ${hasLiked ? 'liked' : ''}" onclick="suggestionsManager.toggleLike('${suggestion.firebaseId}')">
                             <span>👍</span>
                             <span class="like-count">${likes.length}</span>
+                        </button>
+                        <button class="dislike-btn ${hasDisliked ? 'disliked' : ''}" onclick="suggestionsManager.toggleDislike('${suggestion.firebaseId}')">
+                            <span>👎</span>
+                            <span class="dislike-count">${dislikes.length}</span>
                         </button>
                     </div>
                     <div class="comments-section">

@@ -531,12 +531,14 @@ class AnnouncementsManager {
 
         const title = document.getElementById('announcementTitle').value.trim();
         const text = document.getElementById('announcementText').value.trim();
+        const type = document.getElementById('announcementType')?.value || 'Info';
         if (!title || !text) return;
 
         try {
             await addDoc(this.announcementsRef, {
                 title,
                 text,
+                type,
                 author: authManager.currentUser.displayName || authManager.currentUser.email.split('@')[0],
                 authorId: authManager.currentUser.uid,
                 authorAvatar: authManager.avatarId,
@@ -575,6 +577,8 @@ class AnnouncementsManager {
         container.innerHTML = this.announcements.map((announcement) => {
             const authorEmoji = getAvatarEmoji(announcement.authorAvatar) || '🦈';
             const createdAt = announcement.createdAt?.toDate ? announcement.createdAt.toDate().toLocaleString('fr-FR') : announcement.createdAt || '';
+            const type = announcement.type || 'Info';
+            const typeClass = type.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '');
             return `
                 <div class="announcement-card">
                     <div class="announcement-header">
@@ -584,10 +588,37 @@ class AnnouncementsManager {
                         </div>
                         ${isAdmin ? `<button class="delete-announcement-btn" onclick="announcementsManager.deleteAnnouncement('${announcement.firebaseId}')">🗑️</button>` : ''}
                     </div>
+                    <div class="announcement-badge ${typeClass}">${this.escapeHtml(type)}</div>
                     <div class="announcement-text">${this.escapeHtml(announcement.text)}</div>
                 </div>
             `;
         }).join('');
+        this.renderBanner();
+    }
+
+    renderBanner() {
+        const banner = document.getElementById('announcementBanner');
+        if (!banner) return;
+
+        const latest = this.announcements[0];
+        if (!latest) {
+            banner.style.display = 'none';
+            banner.innerHTML = '';
+            return;
+        }
+
+        const createdAt = latest.createdAt?.toDate ? latest.createdAt.toDate().toLocaleString('fr-FR') : latest.createdAt || '';
+        const type = latest.type || 'Info';
+        const typeClass = type.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '');
+        banner.style.display = 'block';
+        banner.innerHTML = `
+            <div class="announcement-banner-content">
+                <span class="announcement-badge ${typeClass}">${this.escapeHtml(type)}</span>
+                <strong>${this.escapeHtml(latest.title)}</strong>
+                <span class="announcement-banner-meta">${this.escapeHtml(latest.text)}</span>
+                <span class="announcement-banner-date">${this.escapeHtml(createdAt)}</span>
+            </div>
+        `;
     }
 
     escapeHtml(text) {

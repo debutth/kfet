@@ -7,6 +7,7 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
+    <div id="announcementBanner" class="announcement-banner" style="display:none;"></div>
     <!-- Navigation -->
     <nav class="navbar">
         <div class="container">
@@ -101,14 +102,28 @@
     <section id="announcements" class="announcements">
         <div class="container">
             <h2 class="reveal">Annonces</h2>
-            <p class="suggestions-subtitle reveal">Ajoute un message pour informer les étudiants de nouveautés, promotions ou produits en rupture.</p>
+            <p class="suggestions-subtitle reveal">Les infos importantes du campus, promotions ou nouveautés, visibles immédiatement.</p>
+
+            <div class="announcement-hero reveal">
+                <span class="announcement-label">📣 Message officiel</span>
+                <p class="announcement-hero-text">Les admins peuvent publier ici n'importe quel message : nouvelle sortie, promo, rupture de stock ou événement spécial.</p>
+            </div>
 
             <form id="announcementForm" class="announcement-form reveal" style="display: none;">
                 <div class="form-group">
-                    <input type="text" id="announcementTitle" placeholder="Titre de l'annonce" required maxlength="80">
+                    <input type="text" id="announcementTitle" placeholder="Titre de l'annonce (ex : PROMO + 1 boisson offerte)" required maxlength="80">
                 </div>
                 <div class="form-group">
-                    <textarea id="announcementText" placeholder="Texte de l'annonce..." rows="3" required maxlength="250"></textarea>
+                    <select id="announcementType" required>
+                        <option value="Info">Info</option>
+                        <option value="Promo">Promo</option>
+                        <option value="Nouveauté">Nouveauté</option>
+                        <option value="Rupture">Rupture de stock</option>
+                        <option value="Événement">Événement</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <textarea id="announcementText" placeholder="Rédige ici le message que tu veux faire apparaître aux étudiants..." rows="3" required maxlength="250"></textarea>
                 </div>
                 <button type="submit" class="submit-btn">Publier l'annonce</button>
             </form>

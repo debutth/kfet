@@ -535,11 +535,12 @@ class AnnouncementsManager {
         if (!title || !text) return;
 
         try {
+            const authorName = authManager.currentUser.displayName || authManager.currentUser.email?.split('@')[0] || 'Admin';
             await addDoc(this.announcementsRef, {
                 title,
                 text,
                 type,
-                author: authManager.currentUser.displayName || authManager.currentUser.email.split('@')[0],
+                author: authorName,
                 authorId: authManager.currentUser.uid,
                 authorAvatar: authManager.avatarId,
                 createdAt: serverTimestamp()
@@ -548,7 +549,7 @@ class AnnouncementsManager {
             alert('Annonce publiée !');
         } catch (error) {
             console.error('Erreur annonce:', error);
-            alert('Erreur lors de la publication de l annonce.');
+            alert(`Erreur lors de la publication de l'annonce: ${error.message || error}`);
         }
     }
 

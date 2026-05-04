@@ -826,7 +826,8 @@ body {
     font-size: 1rem;
 }
 
-.delete-announcement-btn {
+.delete-announcement-btn,
+.edit-announcement-btn {
     background: none;
     border: none;
     cursor: pointer;
@@ -836,7 +837,12 @@ body {
     transition: opacity 0.2s ease, transform 0.2s ease;
 }
 
-.delete-announcement-btn:hover {
+.edit-announcement-btn {
+    color: #2d6acb;
+}
+
+.delete-announcement-btn:hover,
+.edit-announcement-btn:hover {
     opacity: 1;
     transform: scale(1.05);
 }

@@ -494,6 +494,7 @@ class AnnouncementsManager {
     constructor() {
         this.announcementsRef = collection(db, 'announcements');
         this.announcements = [];
+        this.editingAnnouncementId = null;
         this.init();
     }
 
@@ -534,6 +535,10 @@ class AnnouncementsManager {
         const type = document.getElementById('announcementType')?.value || 'Info';
         if (!title || !text) return;
 
+        if (this.editingAnnouncementId) {
+            return this.updateAnnouncement(this.editingAnnouncementId, { title, text, type });
+        }
+
         try {
             const authorName = authManager.currentUser.displayName || authManager.currentUser.email?.split('@')[0] || 'Admin';
             await addDoc(this.announcementsRef, {
@@ -545,12 +550,63 @@ class AnnouncementsManager {
                 authorAvatar: authManager.avatarId,
                 createdAt: serverTimestamp()
             });
-            document.getElementById('announcementForm').reset();
+            this.resetAnnouncementForm();
             alert('Annonce publiée !');
         } catch (error) {
             console.error('Erreur annonce:', error);
             alert(`Erreur lors de la publication de l'annonce: ${error.message || error}`);
         }
+    }
+
+    async updateAnnouncement(firebaseId, updates) {
+        if (!authManager.currentUser || !authManager.isAdmin) {
+            alert('Seuls les admins peuvent modifier les annonces.');
+            return;
+        }
+
+        try {
+            await updateDoc(doc(db, 'announcements', firebaseId), updates);
+            this.resetAnnouncementForm();
+            alert('Annonce modifiée !');
+        } catch (error) {
+            console.error('Erreur mise à jour annonce:', error);
+            alert(`Erreur lors de la modification de l'annonce: ${error.message || error}`);
+        }
+    }
+
+    startEditAnnouncement(firebaseId) {
+        const announcement = this.announcements.find((item) => item.firebaseId === firebaseId);
+        if (!announcement) return;
+
+        const titleInput = document.getElementById('announcementTitle');
+        const textInput = document.getElementById('announcementText');
+        const typeSelect = document.getElementById('announcementType');
+        const submitBtn = document.querySelector('#announcementForm button[type="submit"]');
+
+        if (titleInput && textInput && typeSelect) {
+            titleInput.value = announcement.title;
+            textInput.value = announcement.text;
+            typeSelect.value = announcement.type || 'Info';
+        }
+
+        if (submitBtn) {
+            submitBtn.textContent = 'Modifier l\'annonce';
+        }
+
+        this.editingAnnouncementId = firebaseId;
+    }
+
+    resetAnnouncementForm() {
+        const form = document.getElementById('announcementForm');
+        const submitBtn = document.querySelector('#announcementForm button[type="submit"]');
+
+        if (form) {
+            form.reset();
+        }
+        if (submitBtn) {
+            submitBtn.textContent = 'Publier l\'annonce';
+        }
+        this.editingAnnouncementId = null;
     }
 
     async deleteAnnouncement(firebaseId) {
@@ -587,7 +643,10 @@ class AnnouncementsManager {
                             <div class="announcement-title">${this.escapeHtml(announcement.title)}</div>
                             <div class="announcement-meta">${authorEmoji} ${this.escapeHtml(announcement.author)} · ${this.escapeHtml(createdAt)}</div>
                         </div>
-                        ${isAdmin ? `<button class="delete-announcement-btn" onclick="announcementsManager.deleteAnnouncement('${announcement.firebaseId}')">🗑️</button>` : ''}
+                        ${isAdmin ? `
+                            <button class="edit-announcement-btn" onclick="announcementsManager.startEditAnnouncement('${announcement.firebaseId}')">✏️</button>
+                            <button class="delete-announcement-btn" onclick="announcementsManager.deleteAnnouncement('${announcement.firebaseId}')">🗑️</button>
+                        ` : ''}
                     </div>
                     <div class="announcement-badge ${typeClass}">${this.escapeHtml(type)}</div>
                     <div class="announcement-text">${this.escapeHtml(announcement.text)}</div>

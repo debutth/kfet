@@ -97,6 +97,28 @@
         </div>
     </section>
 
+    <!-- Announcements Section -->
+    <section id="announcements" class="announcements">
+        <div class="container">
+            <h2 class="reveal">Annonces</h2>
+            <p class="suggestions-subtitle reveal">Ajoute un message pour informer les étudiants de nouveautés, promotions ou produits en rupture.</p>
+
+            <form id="announcementForm" class="announcement-form reveal" style="display: none;">
+                <div class="form-group">
+                    <input type="text" id="announcementTitle" placeholder="Titre de l'annonce" required maxlength="80">
+                </div>
+                <div class="form-group">
+                    <textarea id="announcementText" placeholder="Texte de l'annonce..." rows="3" required maxlength="250"></textarea>
+                </div>
+                <button type="submit" class="submit-btn">Publier l'annonce</button>
+            </form>
+
+            <div class="announcements-list" id="announcementsList">
+                <!-- Les annonces apparaîtront ici -->
+            </div>
+        </div>
+    </section>
+
     <!-- Suggestions Section -->
     <section id="suggestions" class="suggestions">
         <div class="container">

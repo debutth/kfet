@@ -122,6 +122,7 @@ class AuthManager {
     updateUI() {
         const authLink = document.getElementById('auth-link');
         const adminProductForm = document.getElementById('adminProductForm');
+        const announcementForm = document.getElementById('announcementForm');
         
         if (this.currentUser) {
             const displayName = this.currentUser.displayName || this.currentUser.email.split('@')[0];
@@ -137,15 +138,21 @@ class AuthManager {
                     <button class="logout-btn" onclick="authManager.logout()">Déconnexion</button>
                 </div>
             `;
-            // Afficher/masquer le formulaire admin
+            // Afficher/masquer les formulaires admin
             if (adminProductForm) {
                 adminProductForm.style.display = this.isAdmin ? 'block' : 'none';
             }
+            if (announcementForm) {
+                announcementForm.style.display = this.isAdmin ? 'block' : 'none';
+            }
         } else {
             authLink.innerHTML = '<a href="#" onclick="showAuthModal()">Se connecter</a>';
-            // Masquer le formulaire admin
+            // Masquer les formulaires admin
             if (adminProductForm) {
                 adminProductForm.style.display = 'none';
+            }
+            if (announcementForm) {
+                announcementForm.style.display = 'none';
             }
         }
     }
@@ -482,6 +489,114 @@ class SuggestionsManager {
     }
 }
 
+// ========== ANNOUNCEMENTS MANAGER ==========
+class AnnouncementsManager {
+    constructor() {
+        this.announcementsRef = collection(db, 'announcements');
+        this.announcements = [];
+        this.init();
+    }
+
+    async init() {
+        this.setupFormListener();
+        this.listenToAnnouncements();
+    }
+
+    setupFormListener() {
+        const form = document.getElementById('announcementForm');
+        if (form) {
+            form.addEventListener('submit', (event) => {
+                event.preventDefault();
+                this.addAnnouncement();
+            });
+        }
+    }
+
+    async listenToAnnouncements() {
+        const q = query(this.announcementsRef, orderBy('createdAt', 'desc'));
+        onSnapshot(q, (snapshot) => {
+            this.announcements = [];
+            snapshot.forEach((docSnap) => {
+                this.announcements.push({ firebaseId: docSnap.id, ...docSnap.data() });
+            });
+            this.renderAnnouncements();
+        });
+    }
+
+    async addAnnouncement() {
+        if (!authManager.currentUser || !authManager.isAdmin) {
+            alert('Seuls les admins peuvent publier des annonces.');
+            return;
+        }
+
+        const title = document.getElementById('announcementTitle').value.trim();
+        const text = document.getElementById('announcementText').value.trim();
+        if (!title || !text) return;
+
+        try {
+            await addDoc(this.announcementsRef, {
+                title,
+                text,
+                author: authManager.currentUser.displayName || authManager.currentUser.email.split('@')[0],
+                authorId: authManager.currentUser.uid,
+                authorAvatar: authManager.avatarId,
+                createdAt: serverTimestamp()
+            });
+            document.getElementById('announcementForm').reset();
+            alert('Annonce publiée !');
+        } catch (error) {
+            console.error('Erreur annonce:', error);
+            alert('Erreur lors de la publication de l annonce.');
+        }
+    }
+
+    async deleteAnnouncement(firebaseId) {
+        if (!authManager.isAdmin) return;
+        if (!confirm('Supprimer cette annonce ?')) return;
+
+        try {
+            await deleteDoc(doc(db, 'announcements', firebaseId));
+        } catch (error) {
+            console.error('Erreur suppression annonce:', error);
+            alert('Erreur lors de la suppression.');
+        }
+    }
+
+    renderAnnouncements() {
+        const container = document.getElementById('announcementsList');
+        if (!container) return;
+
+        if (this.announcements.length === 0) {
+            container.innerHTML = '<div class="no-announcements">Aucune annonce pour le moment.</div>';
+            return;
+        }
+
+        const isAdmin = authManager.isAdmin;
+        container.innerHTML = this.announcements.map((announcement) => {
+            const authorEmoji = getAvatarEmoji(announcement.authorAvatar) || '🦈';
+            const createdAt = announcement.createdAt?.toDate ? announcement.createdAt.toDate().toLocaleString('fr-FR') : announcement.createdAt || '';
+            return `
+                <div class="announcement-card">
+                    <div class="announcement-header">
+                        <div>
+                            <div class="announcement-title">${this.escapeHtml(announcement.title)}</div>
+                            <div class="announcement-meta">${authorEmoji} ${this.escapeHtml(announcement.author)} · ${this.escapeHtml(createdAt)}</div>
+                        </div>
+                        ${isAdmin ? `<button class="delete-announcement-btn" onclick="announcementsManager.deleteAnnouncement('${announcement.firebaseId}')">🗑️</button>` : ''}
+                    </div>
+                    <div class="announcement-text">${this.escapeHtml(announcement.text)}</div>
+                </div>
+            `;
+        }).join('');
+    }
+
+    escapeHtml(text) {
+        const div = document.createElement('div');
+        div.textContent = text;
+        return div.innerHTML;
+    }
+}
+
 // ========== PRODUCTS MANAGER ==========
 class ProductsManager {
     constructor() {
@@ -623,10 +738,12 @@ class ProductsManager {
 // ========== GLOBAL INSTANCES ==========
 const authManager = new AuthManager();
 const suggestionsManager = new SuggestionsManager();
+const announcementsManager = new AnnouncementsManager();
 const productsManager = new ProductsManager();
 
 window.authManager = authManager;
 window.suggestionsManager = suggestionsManager;
+window.announcementsManager = announcementsManager;
 window.productsManager = productsManager;
 window.showAuthModal = showAuthModal;
 window.closeAuthModal = closeAuthModal;

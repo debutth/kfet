@@ -610,6 +610,120 @@ body {
     gap: 2rem;
 }
 
+/* ========== ANNOUNCEMENTS SECTION ========== */
+.announcements {
+    padding: 80px 20px;
+    background-color: #f7fbff;
+}
+
+.announcements h2 {
+    text-align: center;
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+    color: var(--primary-blue);
+    position: relative;
+    padding-bottom: 1rem;
+}
+
+.announcements h2::after {
+    content: '';
+    display: block;
+    width: 100px;
+    height: 4px;
+    background: linear-gradient(90deg, var(--light-blue), var(--primary-blue));
+    margin: 1rem auto 0;
+}
+
+.announcement-form {
+    background: var(--white);
+    padding: 1.8rem;
+    border-radius: 15px;
+    box-shadow: 0 4px 15px rgba(0, 51, 102, 0.08);
+    margin-bottom: 2rem;
+    max-width: 680px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.announcement-form input,
+.announcement-form textarea {
+    width: 100%;
+    padding: 12px;
+    border: 2px solid #e0e0e0;
+    border-radius: 8px;
+    font-family: inherit;
+    font-size: 1rem;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.announcement-form input:focus,
+.announcement-form textarea:focus {
+    outline: none;
+    border-color: var(--light-blue);
+    box-shadow: 0 0 0 3px rgba(0, 85, 204, 0.12);
+}
+
+.announcements-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 1.5rem;
+}
+
+.announcement-card {
+    background: var(--white);
+    padding: 1.5rem;
+    border-radius: 15px;
+    box-shadow: 0 4px 15px rgba(0, 51, 102, 0.08);
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.announcement-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 1rem;
+}
+
+.announcement-title {
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: var(--primary-blue);
+}
+
+.announcement-meta {
+    font-size: 0.85rem;
+    color: #6c7a92;
+    margin-top: 0.35rem;
+}
+
+.announcement-text {
+    color: var(--dark-gray);
+    line-height: 1.6;
+}
+
+.delete-announcement-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: #cc0000;
+    font-size: 1rem;
+    opacity: 0.7;
+    transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+.delete-announcement-btn:hover {
+    opacity: 1;
+    transform: scale(1.05);
+}
+
+.no-announcements {
+    color: #999;
+    font-style: italic;
+    font-size: 0.95rem;
+}
+
 /* ========== SUGGESTION CARDS ========== */
 .suggestion-card {
     background: var(--white);

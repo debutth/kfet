@@ -827,6 +827,38 @@ body {
     text-align: center;
 }
 
+.comment-dislike-btn {
+    background: none;
+    border: 2px solid #e0e0e0;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 0.8rem;
+    padding: 4px 8px;
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+    transition: all 0.2s ease;
+    color: #666;
+}
+
+.comment-dislike-btn:hover {
+    border-color: #ff6b6b;
+    background-color: rgba(255, 107, 107, 0.1);
+    transform: scale(1.05);
+}
+
+.comment-dislike-btn.disliked {
+    border-color: #e74c3c;
+    background-color: #ff6b6b;
+    color: var(--white);
+}
+
+.comment-dislike-btn .dislike-count {
+    font-weight: bold;
+    min-width: 12px;
+    text-align: center;
+}
+
 @keyframes commentSlide {
     from { opacity: 0; transform: translateX(-10px); }
     to   { opacity: 1; transform: translateX(0); }

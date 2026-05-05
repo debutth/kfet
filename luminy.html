@@ -40,6 +40,42 @@
         </div>
     </section>
 
+    <!-- Announcements Section -->
+    <section id="announcements" class="announcements">
+        <div class="container">
+            <h2 class="reveal">Annonces</h2>
+            <p class="suggestions-subtitle reveal">Les infos importantes de la kfet, promotions ou nouveautés, visibles immédiatement.</p>
+
+            <div class="announcement-hero reveal">
+                <span class="announcement-label">📣 Message officiel</span>
+                <p class="announcement-hero-text">Les admins peuvent publier ici n'importe quel message : nouvelle sortie, promo, rupture de stock ou événement spécial.</p>
+            </div>
+
+            <form id="announcementForm" class="announcement-form reveal" style="display: none;">
+                <div class="form-group">
+                    <input type="text" id="announcementTitle" placeholder="Titre de l'annonce (ex : PROMO + 1 boisson offerte)" required maxlength="80">
+                </div>
+                <div class="form-group">
+                    <select id="announcementType" required>
+                        <option value="Info">Info</option>
+                        <option value="Promo">Promo</option>
+                        <option value="Nouveauté">Nouveauté</option>
+                        <option value="Rupture">Rupture de stock</option>
+                        <option value="Événement">Événement</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <textarea id="announcementText" placeholder="Rédige ici le message que tu veux faire apparaître aux étudiants..." rows="3" required maxlength="250"></textarea>
+                </div>
+                <button type="submit" class="submit-btn">Publier l'annonce</button>
+            </form>
+
+            <div class="announcements-list" id="announcementsList">
+                <!-- Les annonces apparaîtront ici -->
+            </div>
+        </div>
+    </section>
+
     <!-- Produits Section -->
     <section id="produits" class="produits">
         <div class="container">
@@ -94,42 +130,6 @@
             <!-- Products Grid -->
             <div class="products-grid" id="productsGrid">
                 <!-- Les produits apparaîtront ici -->
-            </div>
-        </div>
-    </section>
-
-    <!-- Announcements Section -->
-    <section id="announcements" class="announcements">
-        <div class="container">
-            <h2 class="reveal">Annonces</h2>
-            <p class="suggestions-subtitle reveal">Les infos importantes de la kfet, promotions ou nouveautés, visibles immédiatement.</p>
-
-            <div class="announcement-hero reveal">
-                <span class="announcement-label">📣 Message officiel</span>
-                <p class="announcement-hero-text">Les admins peuvent publier ici n'importe quel message : nouvelle sortie, promo, rupture de stock ou événement spécial.</p>
-            </div>
-
-            <form id="announcementForm" class="announcement-form reveal" style="display: none;">
-                <div class="form-group">
-                    <input type="text" id="announcementTitle" placeholder="Titre de l'annonce (ex : PROMO + 1 boisson offerte)" required maxlength="80">
-                </div>
-                <div class="form-group">
-                    <select id="announcementType" required>
-                        <option value="Info">Info</option>
-                        <option value="Promo">Promo</option>
-                        <option value="Nouveauté">Nouveauté</option>
-                        <option value="Rupture">Rupture de stock</option>
-                        <option value="Événement">Événement</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <textarea id="announcementText" placeholder="Rédige ici le message que tu veux faire apparaître aux étudiants..." rows="3" required maxlength="250"></textarea>
-                </div>
-                <button type="submit" class="submit-btn">Publier l'annonce</button>
-            </form>
-
-            <div class="announcements-list" id="announcementsList">
-                <!-- Les annonces apparaîtront ici -->
             </div>
         </div>
     </section>

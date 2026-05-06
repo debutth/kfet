@@ -145,6 +145,9 @@ class AuthManager {
             if (announcementForm) {
                 announcementForm.style.display = this.isAdmin ? 'block' : 'none';
             }
+            if (window.announcementsManager) {
+                announcementsManager.renderAnnouncements();
+            }
         } else {
             authLink.innerHTML = '<a href="#" onclick="showAuthModal()">Se connecter</a>';
             // Masquer les formulaires admin
@@ -153,6 +156,9 @@ class AuthManager {
             }
             if (announcementForm) {
                 announcementForm.style.display = 'none';
+            }
+            if (window.announcementsManager) {
+                announcementsManager.renderAnnouncements();
             }
         }
     }

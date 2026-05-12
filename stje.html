@@ -110,7 +110,9 @@
                         <option value="Produits Frais">Produits Frais</option>
                         <option value="Autre">Autre</option>
                     </select>
-                    <input type="text" id="productPrice" placeholder="Prix (ex: 1.50€)" required maxlength="20">
+                    <input type="text" id="productPrice" placeholder="Prix vente (ex: 1.50€)" required maxlength="20">
+                    <input type="text" id="productCost" placeholder="Coût achat (ex: 0.80€)" required maxlength="20">
+                    <input type="number" id="productStock" placeholder="Stock initial" required min="0">
                     <textarea id="productDescription" placeholder="Description courte..." rows="2" maxlength="150"></textarea>
                     <button type="button" id="addProductBtn" class="admin-btn">Ajouter Produit</button>
                 </div>
@@ -129,6 +131,24 @@
             <!-- Products Grid -->
             <div class="products-grid" id="productsGrid">
                 <!-- Les produits apparaîtront ici -->
+            </div>
+
+            <div id="stockSection" class="stock-section reveal">
+                <div class="stock-header">
+                    <h3>📦 Stock</h3>
+                    <p class="stock-subtitle">Tous les produits avec leur coût achat, leur prix de vente et le stock disponible.</p>
+                </div>
+                <div class="stock-table-wrapper">
+                    <table class="stock-table" id="stockTable">
+                        <thead></thead>
+                        <tbody id="stockTableBody"></tbody>
+                    </table>
+                </div>
+                <div id="tabletPanel" class="tablet-panel" style="display:none;">
+                    <h3>Gestion tablette</h3>
+                    <p>Cliquer sur un produit retire 1 unité du stock.</p>
+                    <div class="tablet-buttons" id="tabletButtons"></div>
+                </div>
             </div>
         </div>
     </section>

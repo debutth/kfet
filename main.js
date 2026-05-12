@@ -713,10 +713,18 @@ class ProductsManager {
         const name = document.getElementById('productName').value.trim();
         const category = document.getElementById('productCategory').value.trim();
         const price = document.getElementById('productPrice').value.trim();
+        const cost = document.getElementById('productCost').value.trim();
+        const stockValue = document.getElementById('productStock').value.trim();
         const description = document.getElementById('productDescription').value.trim();
+        const stock = parseInt(stockValue, 10);
 
-        if (!name || !category || !price) {
-            alert('Nom, catégorie et prix obligatoires !');
+        if (!name || !category || !price || !cost || stockValue === '') {
+            alert('Nom, catégorie, prix, coût et stock sont obligatoires !');
+            return;
+        }
+
+        if (isNaN(stock) || stock < 0) {
+            alert('Le stock doit être un nombre positif.');
             return;
         }
 
@@ -725,6 +733,8 @@ class ProductsManager {
                 name,
                 category,
                 price,
+                cost,
+                stock,
                 description,
                 createdAt: serverTimestamp()
             });
@@ -732,6 +742,8 @@ class ProductsManager {
             document.getElementById('productName').value = '';
             document.getElementById('productCategory').value = '';
             document.getElementById('productPrice').value = '';
+            document.getElementById('productCost').value = '';
+            document.getElementById('productStock').value = '';
             document.getElementById('productDescription').value = '';
             alert('Produit ajouté ! 🎉');
         } catch (error) {
@@ -781,6 +793,8 @@ class ProductsManager {
 
         if (this.filteredProducts.length === 0) {
             container.innerHTML = '<div class="no-products">Aucun produit dans cette catégorie 🛒</div>';
+            this.renderStockTable();
+            this.renderTabletButtons();
             return;
         }
 
@@ -794,9 +808,148 @@ class ProductsManager {
                     <div class="product-price">${this.escapeHtml(product.price)}</div>
                 </div>
                 ${product.description ? `<div class="product-description">${this.escapeHtml(product.description)}</div>` : ''}
-                ${isAdmin ? `<div class="product-actions"><button class="delete-product-btn" onclick="productsManager.deleteProduct('${product.firebaseId}')">🗑️ Supprimer</button></div>` : ''}
+                ${isAdmin ? `
+                    <div class="product-cost">Coût achat : ${this.escapeHtml(product.cost || 'N/A')}</div>
+                    <div class="product-stock">Stock actuel : ${product.stock ?? 0}</div>
+                    <div class="product-actions">
+                        <button class="delete-product-btn" onclick="productsManager.deleteProduct('${product.firebaseId}')">🗑️ Supprimer</button>
+                        <button class="stock-action-btn" onclick="productsManager.decrementStock('${product.firebaseId}')">Tablette -1</button>
+                    </div>
+                ` : ''}
             </div>
         `).join('');
+
+        this.renderStockTable();
+        this.renderTabletButtons();
+    }
+
+    renderStockTable() {
+        const stockBody = document.getElementById('stockTableBody');
+        const stockTable = document.getElementById('stockTable');
+        if (!stockBody || !stockTable) return;
+
+        const isAdmin = authManager.isAdmin;
+        const headerCells = [
+            '<th>Produit</th>',
+            '<th>Coût achat</th>',
+            '<th>Prix vente</th>',
+            '<th>Stock</th>'
+        ];
+
+        if (isAdmin) {
+            headerCells.push('<th>Actions admin</th>');
+        }
+
+        stockTable.querySelector('thead').innerHTML = `<tr>${headerCells.join('')}</tr>`;
+
+        if (this.products.length === 0) {
+            stockBody.innerHTML = '<tr><td colspan="' + headerCells.length + '">Aucun produit enregistré.</td></tr>';
+            return;
+        }
+
+        stockBody.innerHTML = this.products.map(product => {
+            const stockValue = product.stock ?? 0;
+            const costValue = product.cost ? this.escapeHtml(product.cost) : 'N/A';
+            const priceValue = product.price ? this.escapeHtml(product.price) : 'N/A';
+
+            if (isAdmin) {
+                return `
+                    <tr>
+                        <td>${this.escapeHtml(product.name)}</td>
+                        <td><input id="cost-${product.firebaseId}" value="${costValue}" /></td>
+                        <td><input id="price-${product.firebaseId}" value="${priceValue}" /></td>
+                        <td><input id="stock-${product.firebaseId}" type="number" min="0" value="${stockValue}" /></td>
+                        <td>
+                            <button class="stock-save-btn" onclick="productsManager.updateProduct('${product.firebaseId}')">Enregistrer</button>
+                            <button class="stock-action-btn" onclick="productsManager.decrementStock('${product.firebaseId}')">Tablette -1</button>
+                        </td>
+                    </tr>
+                `;
+            }
+
+            return `
+                <tr>
+                    <td>${this.escapeHtml(product.name)}</td>
+                    <td>${costValue}</td>
+                    <td>${priceValue}</td>
+                    <td>${stockValue}</td>
+                </tr>
+            `;
+        }).join('');
+    }
+
+    renderTabletButtons() {
+        const tabletPanel = document.getElementById('tabletPanel');
+        const buttonsContainer = document.getElementById('tabletButtons');
+        if (!tabletPanel || !buttonsContainer) return;
+
+        if (!authManager.isAdmin) {
+            tabletPanel.style.display = 'none';
+            return;
+        }
+
+        tabletPanel.style.display = 'block';
+        buttonsContainer.innerHTML = this.products.map(product => {
+            const stockValue = product.stock ?? 0;
+            return `
+                <button class="tablet-button" onclick="productsManager.decrementStock('${product.firebaseId}')">
+                    ${this.escapeHtml(product.name)} (${stockValue})
+                </button>
+            `;
+        }).join('');
+    }
+
+    async updateProduct(firebaseId) {
+        if (!authManager.isAdmin) {
+            alert('Seuls les admins peuvent modifier ce tableau.');
+            return;
+        }
+
+        const costInput = document.getElementById(`cost-${firebaseId}`);
+        const priceInput = document.getElementById(`price-${firebaseId}`);
+        const stockInput = document.getElementById(`stock-${firebaseId}`);
+
+        if (!costInput || !priceInput || !stockInput) return;
+
+        const cost = costInput.value.trim();
+        const price = priceInput.value.trim();
+        const stock = parseInt(stockInput.value.trim(), 10);
+
+        if (!cost || !price || isNaN(stock) || stock < 0) {
+            alert('Merci de renseigner un coût, un prix valide et un stock positif.');
+            return;
+        }
+
+        try {
+            await updateDoc(doc(db, 'products', firebaseId), { cost, price, stock });
+            alert('Produit mis à jour.');
+        } catch (error) {
+            console.error('Erreur mise à jour produit:', error);
+            alert('Erreur lors de la mise à jour.');
+        }
+    }
+
+    async decrementStock(firebaseId) {
+        if (!authManager.isAdmin) {
+            alert('Seuls les admins peuvent utiliser cette fonction.');
+            return;
+        }
+
+        const product = this.products.find(p => p.firebaseId === firebaseId);
+        if (!product) return;
+
+        const currentStock = product.stock ?? 0;
+        if (currentStock <= 0) {
+            alert('Stock déjà à 0.');
+            return;
+        }
+
+        try {
+            await updateDoc(doc(db, 'products', firebaseId), { stock: currentStock - 1 });
+        } catch (error) {
+            console.error('Erreur decrement stock:', error);
+            alert('Erreur lors de la mise à jour du stock.');
+        }
     }
 
     escapeHtml(text) {

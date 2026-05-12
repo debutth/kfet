@@ -553,7 +553,7 @@ body {
 .stock-table {
     width: 100%;
     border-collapse: collapse;
-    min-width: 0;
+    min-width: 720px;
 }
 
 .stock-table th,
@@ -652,6 +652,10 @@ body {
     .tablet-buttons {
         flex-direction: column;
     }
+
+    .fullscreen-tablet-btn {
+        display: none;
+    }
 }
 
 @media (max-width: 860px) {
@@ -669,6 +673,8 @@ body {
         padding: 0.85rem 0;
         border-bottom: 1px solid #e2e8f0;
         margin: 0;
+        color: #003366;
+        font-weight: 600;
     }
 
     .nav-links a:last-child {
@@ -714,8 +720,9 @@ body {
     }
 
     .products-grid {
-        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
         gap: 1rem;
+        margin-bottom: 2rem;
     }
 
     .product-card {
@@ -750,7 +757,7 @@ body {
     }
 
     .products-grid {
-        margin-bottom: 220px;
+        margin-bottom: 2rem;
     }
 
     .stock-table th,
@@ -761,6 +768,64 @@ body {
 
     .stock-table input {
         font-size: 0.9rem;
+    }
+
+    .tablet-panel {
+        position: fixed;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        max-height: 48vh;
+        overflow-y: auto;
+        border-radius: 18px 18px 0 0;
+        margin: 0;
+        padding: 1rem 1rem 1.2rem;
+        z-index: 20;
+        background: rgba(248, 250, 252, 0.98);
+        box-shadow: 0 -12px 28px rgba(0, 0, 0, 0.18);
+    }
+
+    .tablet-panel.fullscreen {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        max-height: none;
+        height: 100vh;
+        width: 100vw;
+        border-radius: 0;
+        padding: 1.5rem 1rem;
+        background: rgba(248, 250, 252, 0.99);
+        display: flex;
+        flex-direction: column;
+        z-index: 1000;
+    }
+
+    .tablet-panel.fullscreen .tablet-close-btn {
+        display: flex;
+    }
+
+    .tablet-panel.fullscreen .tablet-buttons {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .tablet-close-btn {
+        display: none;
+        background: #ff6b6b;
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 10px;
+        cursor: pointer;
+        font-weight: 700;
+        font-size: 0.95rem;
+        align-self: flex-end;
+        margin-bottom: 0.8rem;
+    }
+
+    .tablet-close-btn:hover {
+        background: #ff5252;
     }
 }
 
@@ -875,7 +940,7 @@ body {
 
 .suggestions-list {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
     gap: 2rem;
 }
 

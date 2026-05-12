@@ -145,8 +145,10 @@
                     </table>
                 </div>
                 <div id="tabletPanel" class="tablet-panel" style="display:none;">
+                    <button class="tablet-close-btn" onclick="productsManager.closeTabletFullscreen()">✕ Fermer</button>
                     <h3>Gestion tablette</h3>
                     <p>Cliquer sur un produit retire 1 unité du stock.</p>
+                    <button class="admin-btn" onclick="productsManager.openTabletFullscreen()" style="margin-bottom: 1rem;">📱 Mode plein écran</button>
                     <div class="tablet-buttons" id="tabletButtons"></div>
                 </div>
             </div>

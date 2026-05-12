@@ -899,6 +899,20 @@ class ProductsManager {
         }).join('');
     }
 
+    openTabletFullscreen() {
+        const tabletPanel = document.getElementById('tabletPanel');
+        if (!tabletPanel) return;
+        tabletPanel.classList.add('fullscreen');
+        document.body.style.overflow = 'hidden';
+    }
+
+    closeTabletFullscreen() {
+        const tabletPanel = document.getElementById('tabletPanel');
+        if (!tabletPanel) return;
+        tabletPanel.classList.remove('fullscreen');
+        document.body.style.overflow = 'auto';
+    }
+
     async updateProduct(firebaseId) {
         if (!authManager.isAdmin) {
             alert('Seuls les admins peuvent modifier ce tableau.');

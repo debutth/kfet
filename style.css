@@ -681,6 +681,20 @@ body {
         border-bottom: none;
     }
 
+    .user-info {
+        color: #003366 !important;
+    }
+
+    .user-info span {
+        color: #003366 !important;
+    }
+
+    .logout-btn {
+        color: #003366 !important;
+        background: transparent !important;
+        border-color: #003366 !important;
+    }
+
     .navbar .hamburger {
         display: flex;
     }
@@ -793,13 +807,15 @@ body {
         bottom: 0;
         max-height: none;
         height: 100vh;
-        width: 100vw;
+        width: 100%;
         border-radius: 0;
         padding: 1.5rem 1rem;
         background: rgba(248, 250, 252, 0.99);
         display: flex;
         flex-direction: column;
         z-index: 1000;
+        overflow-y: auto;
+        overflow-x: hidden;
     }
 
     .tablet-panel.fullscreen .tablet-close-btn {
@@ -940,8 +956,10 @@ body {
 
 .suggestions-list {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
     gap: 2rem;
+    max-width: 100%;
+    overflow-x: hidden;
 }
 
 /* ========== ANNOUNCEMENTS SECTION ========== */
